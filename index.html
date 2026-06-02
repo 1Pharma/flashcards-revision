@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flashcards Pharma — Révisions</title>
+<style>
+:root{
+  --bg0:#050816; --bg1:#0b1022; --glass:rgba(255,255,255,.08); --glass2:rgba(255,255,255,.12);
+  --border:rgba(255,255,255,.16); --text:#eef2ff; --muted:#9aa4bf; --blue:#7dd3fc; --blue2:#38bdf8;
+  --green:#86efac; --green2:#22c55e; --red:#fb7185; --yellow:#facc15; --purple:#c4b5fd; --pink:#f9a8d4;
+  --shadow:0 30px 80px rgba(0,0,0,.38); --radius:28px;
+}
+.light{
+  --bg0:#f8fafc; --bg1:#eef4ff; --glass:rgba(255,255,255,.82); --glass2:rgba(255,255,255,.95);
+  --border:rgba(15,23,42,.10); --text:#0f172a; --muted:#64748b; --blue:#0284c7; --blue2:#2563eb;
+  --green:#16a34a; --green2:#15803d; --red:#e11d48; --yellow:#ca8a04; --purple:#7c3aed; --pink:#db2777;
+  --shadow:0 25px 65px rgba(15,23,42,.12);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; color:var(--text); font-family:Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(56,189,248,.28), transparent 32%),
+    radial-gradient(circle at 85% 18%, rgba(249,168,212,.18), transparent 28%),
+    radial-gradient(circle at 50% 85%, rgba(196,181,253,.20), transparent 35%),
+    linear-gradient(135deg,var(--bg0),var(--bg1));
+  overflow:hidden;
+}
+.app{height:100vh; display:grid; grid-template-columns:310px 1fr; gap:18px; padding:18px}
+.sidebar,.workspace,.card,.modal{
+  background:var(--glass); border:1px solid var(--border); box-shadow:var(--shadow); backdrop-filter:blur(22px); -webkit-backdrop-filter:blur(22px);
+}
+.sidebar{border-radius:var(--radius); padding:22px; display:flex; flex-direction:column; gap:18px; overflow:auto}
+.brand{display:flex; align-items:center; gap:13px}
+.logo{width:48px;height:48px;border-radius:18px;background:linear-gradient(135deg,var(--blue),var(--pink)); display:grid;place-items:center;font-weight:900;color:#06111f; font-size:22px}
+h1{font-size:22px;margin:0;letter-spacing:-.04em}.subtitle{font-size:12px;color:var(--muted);margin-top:4px}
+.love-note{padding:12px 14px;border-radius:18px;background:linear-gradient(135deg,rgba(249,168,212,.18),rgba(125,211,252,.12));border:1px solid rgba(249,168,212,.28);font-size:13px;color:var(--text);line-height:1.45}
+.love-note b,.love-pill b{color:var(--pink)}
+.section-title{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+.control{display:flex;flex-direction:column;gap:8px}
+select,input{
+  width:100%; padding:13px 14px; border-radius:16px; border:1px solid var(--border); outline:none;
+  color:var(--text); background:var(--glass2); font-size:14px;
+}
+select option{
+  background:#0b1022;
+  color:#eef2ff;
+}
+input::placeholder{color:var(--muted)}
+.btn{
+  border:1px solid var(--border); color:var(--text); background:var(--glass2); padding:12px 14px; border-radius:16px;
+  cursor:pointer; font-weight:800; transition:.18s ease; display:inline-flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn:hover{transform:translateY(-1px); border-color:rgba(125,211,252,.45)}
+.btn.primary{background:linear-gradient(135deg,rgba(56,189,248,.95),rgba(249,168,212,.72)); color:#07111f; border:0}
+.btn.red{background:rgba(251,113,133,.16); color:var(--red)}
+.btn.green{background:rgba(134,239,172,.16); color:var(--green)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--glass2);border:1px solid var(--border);border-radius:18px;padding:12px}
+.stat b{display:block;font-size:22px;letter-spacing:-.04em}.stat span{font-size:11px;color:var(--muted)}
+.hint{margin-top:auto;color:var(--muted);font-size:12px;line-height:1.55}
+.workspace{border-radius:var(--radius); padding:22px; display:grid; grid-template-rows:auto 1fr auto; overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:16px}
+.pill{padding:9px 12px;border-radius:999px;background:var(--glass2);border:1px solid var(--border);color:var(--muted);font-weight:700;font-size:13px;white-space:nowrap}
+.love-pill{color:var(--text);border-color:rgba(249,168,212,.28);background:rgba(249,168,212,.10)}
+.progress-wrap{height:10px;background:var(--glass2);border-radius:99px;overflow:hidden;border:1px solid var(--border);flex:1}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--pink));border-radius:99px;transition:.3s ease}
+.card-area{display:grid;place-items:center;position:relative;min-height:0}
+.card{
+  width:min(920px,96%); max-height:calc(100vh - 190px); min-height:470px; border-radius:34px; padding:34px 38px; position:relative; overflow:auto;
+  transform-style:preserve-3d; transition:transform .45s cubic-bezier(.2,.8,.2,1), background .2s ease;
+}
+.card::before{
+  content:""; position:absolute; inset:-2px; background:radial-gradient(circle at 20% 10%, rgba(125,211,252,.18), transparent 35%),
+  radial-gradient(circle at 90% 80%, rgba(249,168,212,.15), transparent 35%); pointer-events:none;
+}
+.card.answer-side{background:rgba(34,197,94,.10)}
+.card-meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:28px;position:relative}
+.badge{padding:8px 11px;border-radius:999px;background:var(--glass2);border:1px solid var(--border);font-size:12px;font-weight:900;color:var(--blue)}
+.badge.green{color:var(--green)}.badge.yellow{color:var(--yellow)}.badge.purple{color:var(--purple)}.badge.pink{color:var(--pink)}
+.card-title{font-size:20px;font-weight:900;color:var(--muted);margin-bottom:14px;position:relative}
+.question{font-size:32px;line-height:1.14;font-weight:950;letter-spacing:-.05em;margin:0 0 28px;position:relative}
+.answer-label{color:var(--green);font-weight:950;text-transform:uppercase;letter-spacing:.12em;font-size:12px;margin-bottom:10px;position:relative}
+.answer{font-size:24px;line-height:1.35;font-weight:650;letter-spacing:-.025em;position:relative;white-space:pre-line}
+.empty-answer{font-size:18px;color:var(--muted);font-weight:700;position:relative}
+.card-footer{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;gap:12px;margin-top:34px;position:relative}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.toast{position:fixed;right:24px;bottom:24px;padding:14px 16px;background:var(--glass2);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.25s;z-index:20}
+.toast.show{opacity:1;transform:translateY(0)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;place-items:center;z-index:30}
+.overlay.show{display:grid}.modal{width:min(720px,92vw);border-radius:26px;padding:26px}
+.modal h2{margin:0 0 10px;font-size:24px}.modal p{color:var(--muted);line-height:1.6}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;max-height:420px;overflow:auto;margin-top:16px}
+.small-card{padding:12px;border-radius:16px;background:var(--glass2);border:1px solid var(--border);cursor:pointer}
+.small-card:hover{border-color:var(--blue)}.small-card b{display:block;margin-bottom:5px}.small-card span{color:var(--muted);font-size:12px}
+@media(max-width:900px){
+  body{overflow:auto}
+  .app{grid-template-columns:1fr;overflow:auto;padding:10px}
+  .sidebar{display:none}
+  .workspace{min-height:100vh}
+  .question{font-size:25px}
+  .answer{font-size:20px}
+  .card{padding:26px 24px;width:100%;max-height:none;min-height:460px}
+  .topbar{flex-wrap:wrap}
+  .progress-wrap{flex-basis:100%}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">💊</div>
+      <div>
+        <h1>Flashcards Pharma</h1>
+        <div class="subtitle">Révisions en français • cartes uniques</div>
+      </div>
+    </div>
+
+    <div class="love-note">Pour ma chérie 💗<br><b>Je t’aime</b></div>
+
+    <div class="control"><div class="section-title">Ordre des cartes</div><select id="order"></select></div>
+    <div class="control"><div class="section-title">Catégorie</div><select id="category"></select></div>
+    <div class="control"><div class="section-title">Recherche</div><input id="search" placeholder="ex : statines, Parkinson, AVK..." /></div>
+
+    <button class="btn primary" id="newSession">↻ Nouvelle session</button>
+    <button class="btn" id="browseBtn">⌘ Explorer les cartes</button>
+    <button class="btn" id="themeBtn">☾ Thème</button>
+
+    <div class="stats">
+      <div class="stat"><b id="statSeen">0</b><span>vues</span></div>
+      <div class="stat"><b id="statCorrect">0</b><span>correctes</span></div>
+      <div class="stat"><b id="statWrong">0</b><span>ratées</span></div>
+      <div class="stat"><b id="statFav">0</b><span>favoris</span></div>
+    </div>
+
+    <button class="btn red" id="resetBtn">Réinitialiser</button>
+
+    <div class="hint">
+      <b>Raccourcis</b><br>
+      Espace : retourner<br>
+      ← / → : naviguer<br>
+      1 : raté • 2 : correct<br>
+      S : favori • B : explorer
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <div class="topbar">
+      <div class="pill" id="counter">Carte 1/1</div>
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="pill love-pill">♡ <b>Je t’aime</b></div>
+      <button class="btn" id="starBtn">☆ Favori</button>
+    </div>
+
+    <section class="card-area">
+      <article class="card" id="card">
+        <div class="card-meta">
+          <span class="badge" id="catBadge">Catégorie</span>
+          <span class="badge green">Français</span>
+          <span class="badge yellow" id="scoreBadge">Score 0/0</span>
+        </div>
+        <div class="card-title" id="cardTitle">Titre</div>
+        <h2 class="question" id="question">Question</h2>
+        <div class="answer-label" id="answerLabel"></div>
+        <div class="answer" id="answer"></div>
+        <div class="empty-answer" id="emptyAnswer">Appuie sur Espace ou « Retourner » pour afficher la réponse.</div>
+        <div class="card-footer">
+          <span id="cardStats">Vues : 0 • Correct : 0 • Raté : 0</span>
+          <span id="lastSeen">Jamais vue</span>
+        </div>
+      </article>
+    </section>
+
+    <div class="controls">
+      <button class="btn" id="prevBtn">← Précédente</button>
+      <button class="btn primary" id="flipBtn">Retourner</button>
+      <button class="btn" id="nextBtn">Suivante →</button>
+      <button class="btn red" id="wrongBtn">Raté</button>
+      <button class="btn green" id="correctBtn">Correct</button>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:center">
+      <div>
+        <h2>Explorer les cartes</h2>
+        <p>Choisis directement une carte. Tu peux filtrer par catégorie, recherche, favoris ou cartes à revoir.</p>
+      </div>
+      <button class="btn" id="closeModal">Fermer</button>
+    </div>
+    <div class="cards-grid" id="cardsGrid"></div>
+  </div>
+</div>
+
+<script>
+/*
+===========================================================
+COMMENT MODIFIER OU AJOUTER DES FLASHCARDS
+===========================================================
+
+Le contenu est volontairement regroupé ici, en texte brut.
+
+Pour modifier une carte :
+- change simplement la ligne après Q: ou après R:.
+
+Pour ajouter une carte :
+- va dans la catégorie voulue, puis ajoute :
+
+Q: Ta question
+R: Ta réponse
+
+Pour créer une nouvelle catégorie :
+- ajoute une ligne comme ceci :
+
+[Nouvelle catégorie]
+
+Puis ajoute les cartes dessous.
+
+Important :
+- une carte commence toujours par Q:
+- la réponse commence toujours par R:
+- laisse une ligne vide entre deux cartes pour que ce soit plus lisible.
+===========================================================
+*/
+
+const FLASHCARDS_TEXT = `[Diabète et glycémie]
+
+Q: Mécanisme d'action du Forxiga
+R: Réduit la réabsorption du glucose au niveau rénal et favorise son excrétion urinaire.
+
+Q: Mécanisme d'action de la metformine
+R:
+- Diminue la production hépatique de glucose.
+- Augmente la sensibilité à l'insuline en augmentant la captation périphérique du glucose.
+- Retarde l'absorption intestinale du glucose.
+
+Q: Signes d'une hypoglycémie
+R:
+- Sueurs
+- Pâleur
+- Vertiges
+- Maux de tête
+- Faiblesse
+- Perte d'équilibre
+- Accélération du rythme cardiaque
+- Tachycardie
+
+Q: Mécanisme d'action des sulfamides hypoglycémiants
+R: Fermeture des canaux potassiques ATP-dépendants des cellules β pancréatiques, provoquant une dépolarisation, une entrée de calcium et une libération d'insuline.
+
+Q: Quels sont les sulfamides hypoglycémiants ?
+R:
+- Gliclazide
+- Glimépiride
+
+Q: Contre-indications des sulfamides hypoglycémiants
+R:
+- Insuffisance hépatique sévère
+- Insuffisance rénale sévère
+
+Q: Effets indésirables des sulfamides hypoglycémiants
+R:
+- Hypoglycémie
+- Prise de poids
+
+Q: Quels médicaments peuvent provoquer une hypoglycémie ?
+R:
+- Alcool
+- AINS
+- AVK
+- Certains antibiotiques
+
+Q: Mécanisme d'action des glinides
+R: Même mécanisme que les sulfamides hypoglycémiants.
+
+Q: Quel est le seul glinide ?
+R: Répaglinide.
+
+Q: Particularité des glinides
+R: À prendre avant un repas. Pas de repas = pas de prise.
+
+Q: Mécanisme d'action des analogues du GLP-1
+R:
+- Augmentent l'insulinosécrétion
+- Diminuent la sécrétion de glucagon
+- Ralentissent la vidange gastrique
+- Diminuent la prise alimentaire
+
+Q: Quels sont les analogues du GLP-1 ?
+R:
+- Sémaglutide (Ozempic®, Wegovy®)
+- Liraglutide (Victoza®, Saxenda®)
+- Dulaglutide (Trulicity®)
+
+Q: Contre-indications des analogues du GLP-1
+R:
+- Antécédent de pancréatite
+- Gastroparésie
+
+Q: Effets indésirables des analogues du GLP-1
+R:
+- Troubles digestifs
+- Hypoglycémie
+- Pancréatite
+
+Q: Mécanisme d'action des inhibiteurs de la DPP-4
+R:
+- Augmentent le GLP-1 en empêchant sa dégradation
+- Augmentent l'insulinosécrétion
+- Diminuent la sécrétion de glucagon
+- Ralentissent la vidange gastrique
+- Diminuent l'appétit
+
+Q: Quelles sont les molécules inhibitrices de la DPP-4 ?
+R:
+- Sitagliptine
+- Vildagliptine
+
+Q: Effets indésirables des inhibiteurs de la DPP-4
+R:
+- Céphalées
+- Vertiges
+- Hypoglycémie
+- Pancréatite
+
+Q: Mécanisme d'action des insulines
+R: L'insuline se fixe à son récepteur, favorisant l'entrée du glucose dans les cellules, le stockage sous forme de glycogène et la diminution de la glycémie.
+
+Q: Effets indésirables des insulines
+R:
+- Hypoglycémie
+- Prise de poids
+- Lipodystrophie
+
+[Cardiologie]
+
+Q: Mécanisme d'action du ramipril
+R: Inhibiteur de l'enzyme de conversion qui diminue la transformation de l'angiotensine I en angiotensine II, provoquant une vasodilatation et une diminution de la rétention hydrosodée.
+
+Q: Mécanisme des bêta-bloquants
+R: Antagonistes des récepteurs β-adrénergiques cardiaques entraînant une diminution de la contractilité myocardique et du débit cardiaque.
+
+Q: Traitement de l'insuffisance cardiaque chronique : les 4 fantastiques
+R:
+- Bêta-bloquant
+- IEC
+- Forxiga
+- ARM
+
+Q: Effets indésirables des diurétiques (sauf spironolactone et éplérénone)
+R:
+- Hypovolémie
+- Hypokaliémie
+- Hyponatrémie
+- Hypotension
+
+Q: Effets indésirables d'un IEC
+R:
+- Hypotension
+- Hyperkaliémie
+- Toux irritative chronique réfractaire aux antitussifs
+
+Q: Mécanisme d'action des sartans
+R: Bloquent les récepteurs de l'angiotensine II, provoquant une vasodilatation périphérique.
+
+Q: Effets indésirables des sartans
+R:
+- Hypotension
+- Vertiges
+- Fatigue
+- Douleurs musculo-squelettiques
+
+Q: Mécanisme d'action des diurétiques de l'anse
+R: Blocage du cotransporteur Na+/K+/2Cl− induisant une excrétion importante de sodium, de potassium et d'eau.
+
+Q: Mécanisme d'action des diurétiques thiazidiques
+R: Agissent au niveau du segment proximal du tubule contourné distal, augmentant la diurèse ainsi que l'excrétion du sodium et du potassium.
+
+Q: Effets indésirables des diurétiques thiazidiques
+R:
+- Hypotension orthostatique
+- Hyponatrémie
+- Hypokaliémie
+- Hyperuricémie
+
+Q: Mécanisme d'action des diurétiques hyperkaliémiants
+R: Blocage des récepteurs à l'aldostérone au niveau du tube collecteur rénal, diminuant la réabsorption du sodium et de l'eau ainsi que l'élimination du potassium.
+
+Q: Quels sont les diurétiques hyperkaliémiants ?
+R:
+- Éplérénone
+- Spironolactone
+
+Q: Effets indésirables des diurétiques hyperkaliémiants
+R:
+- Hyperkaliémie
+- Gynécomastie (surtout spironolactone)
+- Douleurs mammaires
+
+Q: Mécanisme d'action des inhibiteurs calciques
+R: Diminuent l'entrée du calcium, entraînant une relaxation des fibres musculaires et une vasodilatation.
+
+Q: Effets indésirables des inhibiteurs calciques
+R:
+- Œdème des membres inférieurs
+- Hypotension
+- Bradycardie
+- Bouffées de chaleur
+
+Q: Quels sont les inhibiteurs calciques ?
+R:
+- Nicardipine
+- Amlodipine
+- Lercanidipine
+- Vérapamil
+- Diltiazem
+
+Q: Mécanisme d'action de l'amiodarone
+R: Bloque les canaux potassiques cardiaques, provoquant une hyperpolarisation des cellules cardiaques et un ralentissement de la conduction électrique. Augmente la durée du potentiel d'action et la période réfractaire.
+
+Q: Contre-indications de l'amiodarone
+R:
+- Bradycardie sévère
+- Troubles de la conduction
+- Dysthyroïdie
+
+Q: Effets indésirables de l'amiodarone
+R:
+- Photosensibilité
+- Atteinte hépatique
+- Atteinte pulmonaire
+- Troubles visuels
+- QT long
+
+Q: Que doit-on dire au patient lors de l'introduction d'une amiodarone ?
+R: Attention au soleil. Utiliser systématiquement une protection solaire et la renouveler en cas d'exposition aux UV.
+
+Q: Quels sont les suivis à réaliser avec un traitement à base d'amiodarone ?
+R:
+- ECG
+- TSH
+- ASAT
+- ALAT
+- Gamma-GT
+- Kaliémie
+- Surveillance pulmonaire
+- Surveillance ophtalmologique
+
+[Anticoagulants et antiagrégants]
+
+Q: Que dire pour éviter les hémorragies ?
+R:
+- Attention à la cuisine et au jardinage
+- Utiliser une brosse à dents à poils souples
+- Attention au rasage
+
+Q: Mécanisme d'action des AVK
+R: Inhibent l'action de la vitamine K nécessaire à la fabrication des facteurs de coagulation II, VII, IX et X, diminuant ainsi la coagulation et le risque de formation de caillots.
+
+Q: Effets indésirables des AVK
+R:
+- Hématomes
+- Épistaxis
+- Saignements
+- Gingivorragies
+
+Q: Quelles sont les molécules des AVK ?
+R:
+- Warfarine
+- Fluindione
+
+Q: Quel est le suivi à réaliser pour la prise d'un AVK ?
+R: L'INR.
+
+Q: Mécanisme d'action des AOD
+R: Inhibent de façon spécifique et directe la thrombine (facteur II) et le facteur X.
+
+Q: Quels sont les AOD ?
+R:
+- Rivaroxaban
+- Apixaban
+- Dabigatran
+
+Q: Effets indésirables des AOD
+R:
+- Hématomes
+- Saignements
+- Troubles digestifs
+
+Q: Particularités des AOD
+R:
+- Pas de suivi biologique systématique
+- Métabolisés par les CYP3A4
+- Attention à la fonction rénale
+
+Q: Mécanisme d'action des antiagrégants plaquettaires
+R:
+- Inhibition irréversible de la COX-1 → diminution de la synthèse du thromboxane A2 → diminution de l'agrégation plaquettaire (aspirine)
+OU
+- Blocage des récepteurs P2Y12 à l'ADP sur les plaquettes → inhibition de l'agrégation plaquettaire (clopidogrel)
+
+Q: Contre-indications des antiagrégants plaquettaires
+R:
+- Ulcère actif
+- Saignement actif
+
+[Dyslipidémies]
+
+Q: Traitement post-infarctus du myocarde (BASIC)
+R:
+B : Bêta-bloquant
+A : Antiagrégant
+S : Statine
+I : IEC
+C : Contrôle des facteurs de risque
+
+Q: Que fait baisser le cholestérol ?
+R: Le LDL cholestérol.
+
+Q: Mécanisme d'action des statines
+R: Inhibition de l'HMG-CoA réductase responsable de la synthèse du cholestérol.
+
+Q: Contre-indications des statines
+R:
+- Grossesse
+- Allaitement
+- Maladie hépatique évolutive
+
+Q: Particularités des statines
+R: Métabolisées par les CYP3A4, ce qui expose à de nombreuses interactions médicamenteuses, notamment avec les inhibiteurs ou inducteurs enzymatiques.
+
+Q: Interactions médicamenteuses des statines
+R:
+- Macrolides
+- Antifongiques azolés
+- Jus de pamplemousse
+
+Q: Mécanisme d'action des fibrates
+R:
+Activation des récepteurs PPAR-α entraînant :
+- Augmentation de la dégradation des triglycérides
+- Diminution des VLDL
+- Augmentation des HDL
+
+Q: Contre-indications des fibrates
+R:
+- Insuffisance hépatique
+- Insuffisance rénale sévère
+- Maladie biliaire
+
+Q: Mécanisme d'action de l'ézétimibe
+R: Blocage du transporteur NPC1L1 au niveau intestinal, diminuant l'absorption du cholestérol.
+
+Q: Effets indésirables de l'ézétimibe
+R:
+- Troubles digestifs
+- Céphalées
+- Vertiges
+
+[Neurologie et Parkinson]
+
+Q: Mécanisme d'action du Parkinane
+R: Anticholinergique qui bloque l'effet de l'acétylcholine et réduit les troubles moteurs.
+
+Q: Effets indésirables du Parkinane
+R:
+- Sécheresse buccale
+- Rétention urinaire
+- Mydriase
+- Constipation
+
+Q: Mécanisme d'action du Modopar
+R: Précurseur de la dopamine capable de traverser la barrière hémato-encéphalique et de combler le déficit en dopamine.
+
+Q: Mécanisme d'action de la gabapentine
+R: Se lie aux canaux calciques voltage-dépendants, diminuant l'entrée de calcium et l'excitabilité neuronale.
+
+Q: Effets indésirables de la gabapentine
+R:
+- Hypotension artérielle
+- Vertiges
+- Somnolence
+- Fatigue
+
+Q: Mécanisme d'action du Sifrol
+R: Agoniste dopaminergique D2 et D3 qui mime l'action de la dopamine.
+
+Q: Effets indésirables du Sifrol
+R:
+- Somnolence
+- Nausées
+- Hypotension orthostatique
+
+Q: Mécanisme d'action de l'Azilect
+R: Inhibiteur sélectif et irréversible de la MAO-B qui dégrade la dopamine.
+
+Q: Effets indésirables de la rasagiline
+R:
+- Hypotension orthostatique
+- Somnolence
+- Céphalées
+
+Q: Effet "on-off" de la maladie de Parkinson
+R:
+- ON : patient mobile avec quelques mouvements anormaux.
+- OFF : signes d'akinésie et difficultés à la marche.
+
+Q: Qu'est-ce qu'une dyskinésie de fin de dose ?
+R: Mouvements involontaires anormaux et saccadés qui surviennent avant la prise d'une nouvelle dose.
+
+Q: Particularités de la maladie de Parkinson
+R:
+- Troubles de la déglutition
+- Augmentation du risque de dépendance
+
+Q: RHD de la maladie de Parkinson
+R:
+- Suivi kiné / ergothérapeute
+- Adaptation de l'habitat
+- Surveillance des comportements à risque
+- Soutien psychologique
+
+Q: Quand prendre la lévodopa ?
+R: 30 minutes avant le repas.
+
+Q: Quelles sont les contre-indications de l'Azilect ?
+R:
+- Tramadol
+- Triptans
+- Millepertuis
+
+Q: Effets indésirables des antipsychotiques de 1re génération
+R:
+- Sédation
+- Troubles de l'humeur
+- Inversion de l'humeur
+- Dyskinésies et dystonies aiguës dans les 48 premières heures
+- Syndrome parkinsonien
+- Prise de poids
+- Hypoglycémie
+
+[Psychiatrie]
+
+Q: Mécanisme d'action de la mirtazapine
+R: Antagoniste α2 présynaptique central augmentant la neurotransmission noradrénergique et sérotoninergique centrale.
+
+Q: Effets indésirables de la mirtazapine
+R:
+- Prise de poids
+- Somnolence
+- Sédation
+- Sécheresse buccale
+- Céphalées
+
+Q: Mécanisme d'action des ISRS
+R: Bloquent la recapture de la sérotonine au niveau présynaptique, ce qui augmente sa concentration et stimule plus longtemps les récepteurs postsynaptiques.
+
+Q: Quels sont les ISRS ?
+R:
+- Fluvoxamine
+- Fluoxétine
+- Paroxétine
+- Sertraline
+- Citalopram
+- Escitalopram
+
+Q: Effets indésirables des ISRS
+R:
+- Syndrome sérotoninergique
+- Troubles de la libido
+- Levée d'inhibition suicidaire
+
+Q: Mécanisme d'action des benzodiazépines
+R: Fixation sur les récepteurs GABA-A augmentant l'entrée de chlore, ce qui provoque une hyperpolarisation et une diminution de l'activité neuronale.
+
+Q: Effets indésirables des benzodiazépines
+R:
+- Dépendance
+- Somnolence
+- Dépression respiratoire
+
+Q: Contre-indications des APA
+R:
+- Antécédents de convulsions
+- Antécédents d'insuffisance hépatique
+
+Q: Effets indésirables des APA
+R:
+- Prise de poids
+- Hyperglycémie
+- Syndrome extrapyramidal
+- Troubles du contrôle des impulsions
+
+Q: Quels sont les signes d'un syndrome extrapyramidal ?
+R:
+- Akinésie
+- Rigidité
+- Tremblement de repos
+
+Q: Mécanisme d'action des IRSNa
+R:
+- Inhibition du recaptage de la sérotonine (SERT)
+- Inhibition du recaptage de la noradrénaline (NET)
+→ augmentation de leur concentration synaptique
+
+Q: Indications des IRSNa
+R:
+- Dépression
+- Anxiété
+- Douleurs neuropathiques
+
+Q: Contre-indications des IRSNa
+R:
+- Association avec les IMAO-B
+- Insuffisance hépatique sévère
+- Insuffisance rénale chronique sévère
+- HTA non équilibrée
+
+Q: Quels sont les IRSNa ?
+R:
+- Duloxétine
+- Venlafaxine
+- Milnacipran
+
+Q: Effets indésirables des IRSNa
+R:
+- Syndrome sérotoninergique
+- Hyponatrémie
+- Augmentation de la fréquence cardiaque
+- Augmentation de la pression artérielle
+
+Q: Qu'est-ce que la schizophrénie ?
+R: Pathologie chronique dans laquelle une personne a du mal à distinguer ce qui est réel de ce qui ne l'est pas. Elle se manifeste par une alternance de symptômes positifs, comme les hallucinations et les délires, et de symptômes négatifs, comme le repli social et la perte de motivation.
+
+Q: Mécanisme d'action des antipsychotiques de 1re génération
+R:
+Blocage des récepteurs dopaminergiques D2
+→ diminution de l'activité dopaminergique
+→ réduction des hallucinations, délires et agitation psychotique.
+
+Q: Contre-indications des antipsychotiques de 1re génération
+R:
+- Épilepsie
+- Parkinson
+- Glaucome aigu
+- ATCD d'agranulocytose
+- Hypertrophie prostatique
+
+Q: Quels sont les antipsychotiques ?
+R:
+- Chlorpromazine
+- Halopéridol
+- Sulpiride
+- Clozapine
+- Olanzapine
+- Rispéridone
+- Aripiprazole
+
+[Thyroïde]
+
+Q: Quelle est l'indication du Levothyrox ?
+R: Hypothyroïdie.
+
+Q: Quel est le mécanisme d'action du Levothyrox ?
+R: Hormone thyroïdienne de synthèse (T4) transformée en T3 active, augmentant le métabolisme cellulaire.
+
+Q: Contre-indications du Levothyrox
+R:
+- Cardiopathie décompensée
+- Coronaropathie
+
+Q: Effets indésirables du Levothyrox
+R:
+- Hyperthyroïdie
+- Aggravation d'une cardiopathie
+
+Q: Quels sont les signes d'une hypothyroïdie ?
+R:
+- AEG
+- Perte de poids
+- Asthénie
+- Hyperthermie
+- Polydipsie
+- Irritabilité
+- Tachycardie
+- Palpitations
+- Œdèmes des membres inférieurs
+- Bruit
+- Diarrhée
+
+Q: Quels sont les signes d'une hyperthyroïdie ?
+R:
+
+- Prise de poids
+- Asthénie
+- Frilosité
+- Somnolence
+- Bradycardie
+- Myxœdème
+- Constipation
+- Peau pâle et jaunâtre
+
+Q: Comment prendre le Levothyrox ?
+R: À jeun le matin.
+
+Q: Mécanisme d'action des ATS (antithyroïdiens de synthèse)
+R: Inhibition de la thyroperoxydase (TPO) → diminution de la synthèse des hormones thyroïdiennes T3 et T4.
+
+Q: Contre-indications des ATS
+R:
+- Cancer de la thyroïde
+- Antécédent d'agranulocytose
+- Atteinte hépatique sévère
+
+Q: Effets indésirables des ATS
+R:
+- Agranulocytose
+- Atteinte hépatique
+- Prurit
+- Hypothyroïdie
+
+Q: Quels sont les ATS ?
+R:
+- Carbimazole
+- Thiamazole
+
+[Contraception]
+
+Q: Mécanisme d'action des pilules contraceptives
+R:
+Œstrogènes :
+- Inhibition de la sécrétion de FSH
+- Inhibition de la croissance folliculaire
+- Inhibition de l'ovulation (via LH)
+
+Progestatifs :
+- Diminution de la LH et de la FSH
+- Épaississement de la glaire cervicale
+- Modification de l'endomètre
+
+Q: Effets indésirables des pilules contraceptives
+R:
+- Aggravation d'une dyslipidémie
+- Effet diabétogène
+- Hémorragies
+
+Q: Quelles sont les pilules progestatives microdosées ?
+R:
+- Lévonorgestrel (Microval®)
+- Désogestrel (Cerazette®, Antigone®, Optimizette®)
+- Drospirénone (Slinda®)
+
+Q: Quand prescrire une pilule progestative microdosée ?
+R:
+En cas de contre-indication aux pilules estroprogestatives :
+- Risque métabolique
+- Risque vasculaire
+- Tabagisme
+- ATCD thromboembolique
+- Surpoids
+- Allaitement
+
+Q: Quel est le délai d'oubli pour Microval® ?
+R: 3 heures.
+
+Q: Contre-indications des progestatifs microdosés
+R:
+- TEV (thromboembolie veineuse)
+- Insuffisance hépatique
+- ictere chronique 
+- cancer génitaux et du sein
+- hda non contrôlé ou qui apparait pendant le traitement
+
+Q: Quels sont les contre-indications des pilules combinées ?
+R:
+- ATCD de thrombose
+- AVC ou infarctus
+- Migraine avec aura
+- Cancer hormono-dépendant
+- Insuffisance hépatique sévère
+- HTA non équilibrée
+- Tabagisme après 35 ans (> 15 cigarettes/j)
+
+[Sevrage tabagique]
+
+Q: Signes d'un surdosage en nicotine
+R:
+- Palpitations
+- Tachycardie
+- Insomnie
+
+Q: Utilisation d'un comprimé à sucer de nicotine
+R:
+- Placer le comprimé dans la bouche.
+- Le déplacer d'un côté à l'autre jusqu'à dissolution complète (20 à 30 min).
+- Ne pas l'avaler ni le croquer.
+- En cas de hoquet ou de brûlure gastrique, le sucer plus lentement.
+
+Q: Utilisation d'un patch de nicotine
+R:
+- Appliquer sur une peau propre, saine et sans poils dès le réveil.
+
+Q: Précaution d'utilisation d'un patch de nicotine
+R: Le patch ne doit pas être appliqué sur la même zone tous les jours.
+
+Q: Mécanisme d'action des substituts nicotiniques
+R: Agonistes des récepteurs nicotiniques permettant de diminuer l'envie de fumer.
+
+[Goutte]
+
+Q: Mécanisme d'action de l'allopurinol
+R: Inhibe la xanthine oxydase responsable de la production d'acide urique, ce qui diminue la concentration d'acide urique.
+
+Q: Mécanisme d'action du fébuxostat
+R: Même mécanisme que l'allopurinol.
+
+Q: Effets indésirables de l'allopurinol
+R:
+- Augmentation de la TSH
+- Rash
+- Syndrome de Stevens-Johnson / Lyell
+
+[Digestif et antispasmodiques]
+
+Q: Mécanisme d'action du Spasfon
+R: Diminue la contractilité des fibres musculaires lisses responsables des spasmes digestifs, urinaires, etc.
+
+[Vitamines et électrolytes]
+
+Q: Quand prendre le Kayexalate ?
+R: Pendant le repas.
+
+Q: Comment prendre le cholécalciférol ?
+R: Avec un repas riche en graisse.
+
+[Ophtalmologie]
+
+Q: Glaucome chronique
+R: Glaucome à angle ouvert.
+
+Q: Glaucome aigu
+R: Glaucome à angle fermé.
+
+[Anti-épileptiques]
+
+Q: Mécanisme d'action des anti-épileptiques GABAergiques
+R: Les antiépileptiques GABAergiques augmentent l'action inhibitrice du GABA dans le cerveau, ce qui diminue l'excitabilité neuronale et limite la survenue des crises d'épilepsie.
+
+Q: Quelles sont les molécules anti-épileptiques GABAergiques ?
+R:
+- Clonazépam
+- Clobazam
+- Diazépam
+- Phénobarbital
+- Vigabatrine
+- Tiagabine
+- Valproate de sodium
+
+Q: Contre-indications des anti-épileptiques GABAergiques
+R:
+- Insuffisance respiratoire sévère
+- Syndrome d'apnée du sommeil
+- Insuffisance hépatique sévère
+- Myasthénie
+- Grossesse pour le valproate : double protection nécessaire lors des rapports sexuels
+
+Q: Effets indésirables des anti-épileptiques GABAergiques
+R:
+- Détresse respiratoire
+- Troubles du comportement
+- Somnolence
+- Vertiges
+- Ataxie
+
+Q: Quelle est la précaution à prendre avec le valproate ?
+R: Le valproate est tératogène. Il ne doit pas être prescrit chez une femme ayant un désir de grossesse.
+
+Q: Mécanisme d'action des bloqueurs des canaux calciques en neurologie
+R: Ils bloquent les canaux calciques, ce qui diminue la concentration de Ca²⁺ dans les neurones. Le calcium entre en moins grande quantité, donc moins de neurotransmetteurs excitateurs sont libérés, ce qui diminue l'excitabilité neuronale.
+
+Q: Quelles sont les molécules des bloqueurs des canaux calciques en neurologie ?
+R:
+- Gabapentine
+- Prégabaline
+
+Q: Quelles sont les particularités de la prégabaline ?
+R: La prégabaline peut provoquer une dépendance et présente un risque cardiaque, notamment avec l'apparition possible d'œdèmes.
+
+Q: Mécanisme d'action des modulateurs de la protéine SV2A
+R: Se fixe sur la protéine SV2A, ce qui provoque une modification des vésicules synaptiques et diminue la libération excessive des neurotransmetteurs excitateurs. On obtient donc une réduction de l'excitabilité neuronale et une stabilisation de l'activité neuronale.
+
+Q: Quelle est la molécule de la classe des modulateurs de SV2A ?
+R:
+- Lévétiracétam
+
+Q: Effets indésirables des modulateurs de SV2A
+R:
+- Irritabilité
+- Nervosité
+- Agressivité
+- Anxiété
+- Dépression
+- Troubles du comportement
+- Somnolence
+- Vertiges
+- Fatigue
+- Asthénie
+
+Q: À quoi faut-il faire attention lors de la prescription de Keppra® ?
+R: Il faut faire attention en cas de dépression et d'idées suicidaires.
+
+[Antalgiques]
+
+Q: Mécanisme d'action du paracétamol
+R: Inhibition des COX, ce qui diminue la production de thromboxane A2 responsable de la douleur et de la fièvre.`;
+
+const STORAGE_KEY = "pharma-flashcards-amour-v1";
+const orders = ["Aléatoire", "Séquentiel"];
+
+function parseCards(text){
+  const cards = [];
+  let category = "Général";
+  let q = null;
+  let answerLines = [];
+  let inAnswer = false;
+
+  function flush(){
+    if(q !== null){
+      const answer = answerLines.join("\n").trim();
+      cards.push({
+        id: makeId(category + "::" + q),
+        category,
+        title: q,
+        question: q,
+        answer
+      });
+    }
+    q = null;
+    answerLines = [];
+    inAnswer = false;
+  }
+
+  text.replace(/\r/g, "").split("\n").forEach(line => {
+    const catMatch = line.match(/^\s*\[(.+?)\]\s*$/);
+    const qMatch = line.match(/^\s*Q:\s*(.*)$/);
+    const rMatch = line.match(/^\s*R:\s*(.*)$/);
+
+    if(catMatch){
+      flush();
+      category = catMatch[1].trim();
+      return;
+    }
+
+    if(qMatch){
+      flush();
+      q = qMatch[1].trim();
+      inAnswer = false;
+      return;
+    }
+
+    if(rMatch){
+      inAnswer = true;
+      answerLines = [];
+      if(rMatch[1].trim()) answerLines.push(rMatch[1].trim());
+      return;
+    }
+
+    if(q !== null && inAnswer){
+      answerLines.push(line);
+    }
+  });
+
+  flush();
+  return cards;
+}
+
+function makeId(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++) h = Math.imul(31,h) + str.charCodeAt(i) | 0;
+  return "c" + Math.abs(h).toString(36);
+}
+
+const CARDS = parseCards(FLASHCARDS_TEXT);
+const categories = ["Toutes", ...Array.from(new Set(CARDS.map(c=>c.category))).sort(), "⭐ Favoris", "À revoir"];
+
+let state = loadState();
+let session = [];
+let pos = 0;
+let flipped = false;
+let current = 0;
+
+function baseState(){
+  const obj = {seen:{}, correct:{}, wrong:{}, stars:{}, lastSeen:{}, order:"Aléatoire", category:"Toutes", theme:"dark"};
+  CARDS.forEach(c=>{
+    obj.seen[c.id]=0;
+    obj.correct[c.id]=0;
+    obj.wrong[c.id]=0;
+    obj.stars[c.id]=false;
+    obj.lastSeen[c.id]="";
+  });
+  return obj;
+}
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    const base=baseState();
+    if(!raw) return base;
+    const s=JSON.parse(raw);
+    return {
+      ...base,
+      ...s,
+      seen:{...base.seen,...s.seen},
+      correct:{...base.correct,...s.correct},
+      wrong:{...base.wrong,...s.wrong},
+      stars:{...base.stars,...s.stars},
+      lastSeen:{...base.lastSeen,...s.lastSeen}
+    };
+  }catch(e){return baseState();}
+}
+
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function $(id){return document.getElementById(id);}
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1400); }
+
+function setup(){
+  if(state.theme==="light") document.body.classList.add("light");
+  $("order").innerHTML = orders.map(m=>`<option>${m}</option>`).join("");
+  $("category").innerHTML = categories.map(c=>`<option>${c}</option>`).join("");
+  $("order").value = state.order;
+  $("category").value = state.category;
+  $("order").onchange=()=>{state.order=$("order").value; save(); newSession();};
+  $("category").onchange=()=>{state.category=$("category").value; save(); newSession();};
+  $("search").oninput=()=>newSession();
+  $("newSession").onclick=newSession;
+  $("flipBtn").onclick=flip;
+  $("prevBtn").onclick=prev;
+  $("nextBtn").onclick=next;
+  $("wrongBtn").onclick=()=>mark(false);
+  $("correctBtn").onclick=()=>mark(true);
+  $("starBtn").onclick=toggleStar;
+  $("themeBtn").onclick=toggleTheme;
+  $("resetBtn").onclick=resetProgress;
+  $("browseBtn").onclick=openBrowser;
+  $("closeModal").onclick=closeBrowser;
+  $("overlay").onclick=(e)=>{if(e.target.id==="overlay") closeBrowser();};
+  document.addEventListener("keydown", shortcuts);
+  newSession();
+}
+
+function shortcuts(e){
+  if(e.target.tagName==="INPUT") return;
+  if(e.code==="Space"){e.preventDefault(); flip();}
+  if(e.key==="ArrowRight") next();
+  if(e.key==="ArrowLeft") prev();
+  if(e.key==="1") mark(false);
+  if(e.key==="2") mark(true);
+  if(e.key.toLowerCase()==="s") toggleStar();
+  if(e.key.toLowerCase()==="b") openBrowser();
+}
+
+function filtered(){
+  const cat=$("category").value, q=$("search").value.trim().toLowerCase();
+  return CARDS.map((c,i)=>({c,i})).filter(({c,i})=>{
+    const id = c.id;
+    let keep=true;
+    if(cat==="⭐ Favoris") keep=!!state.stars[id];
+    else if(cat==="À revoir") keep=(Number(state.wrong[id]||0) > Number(state.correct[id]||0));
+    else if(cat!=="Toutes") keep=c.category===cat;
+    if(q){
+      const blob=(c.category+" "+c.question+" "+c.answer).toLowerCase();
+      keep = keep && blob.includes(q);
+    }
+    return keep;
+  }).map(x=>x.i);
+}
+
+function newSession(){
+  session = filtered(); // volontairement une seule apparition par carte
+  if(state.order === "Aléatoire") shuffle(session);
+  pos=0;
+  current=session[0] ?? 0;
+  flipped=false;
+  render();
+}
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]];} }
+
+function render(){
+  updateStats();
+  if(!session.length){
+    $("card").classList.remove("answer-side");
+    $("catBadge").textContent="Aucune catégorie";
+    $("scoreBadge").textContent="Score 0/0";
+    $("cardTitle").textContent="Aucune carte";
+    $("question").textContent="Change la catégorie ou la recherche.";
+    $("answerLabel").textContent="";
+    $("answer").textContent="";
+    $("emptyAnswer").style.display="none";
+    $("counter").textContent=`0/${CARDS.length}`;
+    $("progressBar").style.width="0%";
+    return;
+  }
+  const c=CARDS[current];
+  const id=c.id;
+  $("card").classList.toggle("answer-side", flipped);
+  $("catBadge").textContent=c.category;
+  $("scoreBadge").textContent=`Score ${Number(state.correct[id]||0)}/${Number(state.wrong[id]||0)}`;
+  $("cardTitle").textContent=(state.stars[id]?"★ ":"☆ ")+c.title;
+  $("question").textContent=c.question;
+  $("answerLabel").textContent=flipped ? "Réponse" : "";
+  $("answer").textContent=flipped ? c.answer : "";
+  $("emptyAnswer").style.display=flipped?"none":"block";
+  $("cardStats").textContent=`Vues : ${state.seen[id]||0} • Correct : ${state.correct[id]||0} • Raté : ${state.wrong[id]||0}`;
+  $("lastSeen").textContent=state.lastSeen[id] ? `Dernière vue : ${state.lastSeen[id]}` : "Jamais vue";
+  $("counter").textContent=`Carte ${pos+1}/${session.length} • ${CARDS.length} au total`;
+  $("progressBar").style.width=`${session.length?((pos+1)/session.length)*100:0}%`;
+  $("starBtn").textContent=state.stars[id]?"★ Favori":"☆ Favori";
+}
+
+function flip(){
+  if(!session.length) return;
+  flipped=!flipped;
+  if(flipped){
+    const id=CARDS[current].id;
+    state.seen[id]=Number(state.seen[id]||0)+1;
+    state.lastSeen[id]=new Date().toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});
+    save();
+  }
+  render();
+}
+
+function next(){ if(!session.length)return; pos=(pos+1)%session.length; current=session[pos]; flipped=false; render(); }
+function prev(){ if(!session.length)return; pos=(pos-1+session.length)%session.length; current=session[pos]; flipped=false; render(); }
+
+function mark(ok){
+  if(!session.length)return;
+  const id=CARDS[current].id;
+  if(ok){
+    state.correct[id]=Number(state.correct[id]||0)+1;
+    toast("Correct ✅");
+  } else {
+    state.wrong[id]=Number(state.wrong[id]||0)+1;
+    toast("À revoir 💪");
+  }
+  save();
+  next();
+}
+
+function toggleStar(){
+  if(!session.length)return;
+  const id=CARDS[current].id;
+  state.stars[id]=!state.stars[id];
+  save();
+  toast(state.stars[id]?"Ajouté aux favoris":"Retiré des favoris");
+  render();
+}
+
+function updateStats(){
+  const n=CARDS.length;
+  const seen=CARDS.filter(c=>Number(state.seen[c.id]||0)>0).length;
+  const correct=CARDS.reduce((s,c)=>s+Number(state.correct[c.id]||0),0);
+  const wrong=CARDS.reduce((s,c)=>s+Number(state.wrong[c.id]||0),0);
+  const fav=CARDS.filter(c=>state.stars[c.id]).length;
+  $("statSeen").textContent=`${seen}/${n}`;
+  $("statCorrect").textContent=correct;
+  $("statWrong").textContent=wrong;
+  $("statFav").textContent=fav;
+}
+
+function toggleTheme(){
+  document.body.classList.toggle("light");
+  state.theme=document.body.classList.contains("light")?"light":"dark";
+  save();
+}
+
+function resetProgress(){
+  if(confirm("Supprimer toute la progression ?")){
+    localStorage.removeItem(STORAGE_KEY);
+    state=baseState();
+    $("order").value=state.order;
+    $("category").value=state.category;
+    newSession();
+    toast("Progression réinitialisée");
+  }
+}
+
+function openBrowser(){
+  const grid=$("cardsGrid");
+  grid.innerHTML="";
+  filtered().forEach(i=>{
+    const c=CARDS[i];
+    const id=c.id;
+    const div=document.createElement("div");
+    div.className="small-card";
+    div.innerHTML=`<b>${state.stars[id]?"★ ":""}${escapeHtml(c.title)}</b><span>${escapeHtml(c.category)} • vues : ${state.seen[id]||0} • ${state.correct[id]||0}/${state.wrong[id]||0}</span>`;
+    div.onclick=()=>{session=[i];pos=0;current=i;flipped=false;closeBrowser();render();};
+    grid.appendChild(div);
+  });
+  $("overlay").classList.add("show");
+}
+
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+}
+
+function closeBrowser(){ $("overlay").classList.remove("show"); }
+
+setup();
+</script>
+</body>
+</html>
