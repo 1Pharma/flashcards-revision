@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0ea5e9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Flashcards Pharma">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Flashcards Pharma</title>
+<style>
+:root{
+  --bg0:#020617;
+  --bg1:#0f172a;
+
+  --panel:rgba(255,255,255,.075);
+  --panel2:rgba(255,255,255,.12);
+  --border:rgba(255,255,255,.16);
+
+  --text:#f8fafc;
+  --muted:#94a3b8;
+
+  --blue:#38bdf8;
+  --blue2:#0ea5e9;
+
+  --green:#86efac;
+  --green2:#22c55e;
+
+  --red:#fb7185;
+  --yellow:#facc15;
+  --purple:#c4b5fd;
+
+  --shadow:0 30px 80px rgba(0,0,0,.42);
+  --radius:36px;
+}
+.light{
+  --bg0:#f8fafc;
+  --bg1:#e0f2fe;
+
+  --panel:rgba(255,255,255,.86);
+  --panel2:rgba(255,255,255,.96);
+  --border:rgba(15,23,42,.12);
+
+  --text:#0f172a;
+  --muted:#64748b;
+
+  --blue:#0284c7;
+  --blue2:#2563eb;
+
+  --green:#16a34a;
+  --green2:#15803d;
+
+  --red:#e11d48;
+  --yellow:#ca8a04;
+  --purple:#7c3aed;
+
+  --shadow:0 25px 65px rgba(15,23,42,.14);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;}
+body{
+  min-height:100vh; min-height:calc(var(--vh,1vh)*100); color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(56,189,248,.20), transparent 32%),
+    radial-gradient(circle at 85% 18%, rgba(34,197,94,.12), transparent 28%),
+    radial-gradient(circle at 50% 85%, rgba(148,163,184,.14), transparent 35%),
+    linear-gradient(135deg,var(--bg0),var(--bg1));
+  overflow:hidden;
+}
+button,select,input{font-family:inherit}
+.app{height:100vh;height:calc(var(--vh,1vh)*100);display:grid;grid-template-columns:330px 1fr;gap:18px;padding:18px;}
+.sidebar,.workspace,.card,.modal,.list-panel{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.025)),
+    var(--panel);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+}
+.light .sidebar,.light .workspace,.light .card,.light .modal,.light .list-panel{
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.78)),
+    var(--panel);
+}
+.sidebar{border-radius:var(--radius);padding:22px;display:flex;flex-direction:column;gap:16px;overflow:auto;-webkit-overflow-scrolling:touch;}
+.brand{display:flex;align-items:center;gap:13px}
+.logo{width:48px;height:48px;border-radius:18px;background:linear-gradient(135deg,var(--blue),var(--green));display:grid;place-items:center;font-weight:950;color:#06111f;font-size:23px}
+h1{font-size:22px;margin:0;letter-spacing:-.04em}
+.subtitle{font-size:12px;color:var(--muted);margin-top:4px}
+.section-title{font-size:11px;color:var(--muted);font-weight:900;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+.control{display:flex;flex-direction:column;gap:8px}
+select,input{
+  width:100%;
+  padding:13px 15px;
+  border-radius:18px;
+  border:1px solid var(--border);
+  outline:none;
+  color:var(--text);
+  background:var(--panel2);
+  font-size:14px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 10px 24px rgba(0,0,0,.10);
+  transition:border-color .18s ease, box-shadow .18s ease, background .18s ease, transform .18s ease;
+}
+select{
+  cursor:pointer;
+  appearance:none;
+  -webkit-appearance:none;
+  padding-right:44px;
+  background:
+    linear-gradient(135deg, rgba(56,189,248,.12), rgba(34,197,94,.07)),
+    var(--panel2);
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5' stroke='%2394a3b8' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(56,189,248,.12), rgba(34,197,94,.07));
+  background-repeat:no-repeat, no-repeat;
+  background-position:right 14px center, center;
+  background-size:18px, cover;
+}
+.light select{
+  background:
+    linear-gradient(135deg, rgba(2,132,199,.08), rgba(22,163,74,.06)),
+    var(--panel2);
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='18' height='18' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5' stroke='%2364748b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+    linear-gradient(135deg, rgba(2,132,199,.08), rgba(22,163,74,.06));
+  background-repeat:no-repeat, no-repeat;
+  background-position:right 14px center, center;
+  background-size:18px, cover;
+}
+select:hover,input:hover{
+  border-color:rgba(56,189,248,.42);
+  transform:translateY(-1px);
+}
+select:focus,input:focus{
+  border-color:var(--blue);
+  box-shadow:
+    0 0 0 4px rgba(56,189,248,.15),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    0 14px 30px rgba(0,0,0,.14);
+}
+select option{
+  background:#0f172a;
+  color:#f8fafc;
+}
+.light select option{
+  background:#ffffff;
+  color:#0f172a;
+}
+input::placeholder{color:var(--muted)}
+.btn{
+  border:1px solid var(--border);color:var(--text);background:var(--panel2);padding:12px 14px;border-radius:16px;
+  cursor:pointer;font-weight:850;transition:.18s ease;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  -webkit-tap-highlight-color:transparent; user-select:none;
+}
+.btn:hover{transform:translateY(-1px);border-color:rgba(125,211,252,.45)}
+.btn:active{transform:translateY(0)}
+.btn.primary{background:linear-gradient(135deg,rgba(56,189,248,.95),rgba(34,197,94,.70));color:#06111f;border:0}
+.btn.red{background:rgba(251,113,133,.16);color:var(--red)}
+.btn.green{background:rgba(134,239,172,.16);color:var(--green)}
+.btn.yellow{background:rgba(250,204,21,.14);color:var(--yellow)}
+.btn.small{padding:9px 11px;border-radius:13px;font-size:12px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--panel2);border:1px solid var(--border);border-radius:22px;padding:12px}
+.stat b{display:block;font-size:21px;letter-spacing:-.04em}
+.stat span{font-size:11px;color:var(--muted)}
+.progress-cats{display:flex;flex-direction:column;gap:8px;max-height:245px;overflow:auto;-webkit-overflow-scrolling:touch;padding-right:3px}
+.cat-line{background:var(--panel2);border:1px solid var(--border);border-radius:18px;padding:10px 11px;cursor:pointer}
+.cat-line:hover{border-color:rgba(125,211,252,.45)}
+.cat-head{display:flex;justify-content:space-between;gap:8px;font-size:12px;font-weight:850}
+.cat-head span:last-child{color:var(--muted);font-weight:750}
+.cat-bar{height:7px;border-radius:99px;background:rgba(255,255,255,.10);overflow:hidden;margin-top:7px}
+.light .cat-bar{background:rgba(15,23,42,.10)}
+.cat-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px}
+.hint{color:var(--muted);font-size:12px;line-height:1.55}
+.workspace{border-radius:var(--radius);padding:22px;display:grid;grid-template-rows:auto 1fr auto;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.pill{padding:9px 12px;border-radius:999px;background:var(--panel2);border:1px solid var(--border);color:var(--muted);font-weight:800;font-size:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
+.progress-wrap{height:10px;background:var(--panel2);border-radius:99px;overflow:hidden;border:1px solid var(--border);flex:1;min-width:150px}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--green));border-radius:99px;transition:.3s ease}
+.card-area{display:grid;place-items:center;position:relative;min-height:0;overflow:hidden}
+.card{
+  width:min(960px,97%);min-height:470px;max-height:100%;border-radius:40px;padding:32px 36px;position:relative;overflow:hidden;
+  transition:background .2s ease, border-color .2s ease;
+}
+.card.answer-mode{background:rgba(34,197,94,.10);border-color:rgba(134,239,172,.28)}
+.card::before{
+  content:"";position:absolute;inset:-2px;background:radial-gradient(circle at 20% 10%, rgba(125,211,252,.16), transparent 35%),
+  radial-gradient(circle at 90% 80%, rgba(34,197,94,.10), transparent 35%);pointer-events:none;
+}
+.card-content{position:relative;z-index:1;display:flex;flex-direction:column;height:100%}
+.card-meta{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px}
+.badge{padding:8px 11px;border-radius:999px;background:var(--panel2);border:1px solid var(--border);font-size:12px;font-weight:900;color:var(--blue)}
+.badge.green{color:var(--green)}.badge.yellow{color:var(--yellow)}.badge.purple{color:var(--purple)}.badge.red{color:var(--red)}
+.card-title{font-size:15px;font-weight:900;color:var(--muted);margin-bottom:11px;text-transform:uppercase;letter-spacing:.08em}
+.question{font-size:clamp(24px,3.3vw,36px);line-height:1.14;font-weight:950;letter-spacing:-.045em;margin:0 0 24px;white-space:pre-line}
+.answer-label{color:var(--green);font-weight:950;text-transform:uppercase;letter-spacing:.12em;font-size:12px;margin-bottom:10px}
+.answer-box{font-size:clamp(18px,2.15vw,24px);line-height:1.42;font-weight:650;letter-spacing:-.022em;white-space:pre-line;overflow:auto;-webkit-overflow-scrolling:touch;max-height:45vh;padding-right:6px}
+.answer-box mark{background:rgba(250,204,21,.22);color:inherit;border:1px solid rgba(250,204,21,.24);padding:0 4px;border-radius:7px}
+.empty-answer{font-size:18px;color:var(--muted);font-weight:750;line-height:1.55}
+.card-footer{margin-top:auto;padding-top:18px;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;gap:12px;flex-wrap:wrap}
+.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.toast{position:fixed;right:24px;bottom:24px;padding:14px 16px;background:var(--panel2);border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);opacity:0;transform:translateY(10px);transition:.25s;z-index:80;max-width:calc(100vw - 48px)}
+.toast.show{opacity:1;transform:translateY(0)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;place-items:center;z-index:70;padding:18px}
+.overlay.show{display:grid}
+.modal{width:min(860px,94vw);max-height:88vh;overflow:auto;-webkit-overflow-scrolling:touch;border-radius:26px;padding:24px}
+.modal h2{margin:0 0 10px;font-size:24px}
+.modal p{color:var(--muted);line-height:1.6}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;max-height:500px;overflow:auto;margin-top:16px}
+.small-card{padding:13px;border-radius:16px;background:var(--panel2);border:1px solid var(--border);cursor:pointer}
+.small-card:hover{border-color:var(--blue)}
+.small-card b{display:block;margin-bottom:6px}
+.small-card span{color:var(--muted);font-size:12px}
+.list-screen{display:none;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
+.list-screen.show{display:block}
+.list-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.list-card{background:var(--panel);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:12px}
+.list-card h3{margin:0 0 8px;font-size:17px;line-height:1.25}
+.list-answer{white-space:pre-line;color:var(--text);line-height:1.5;font-weight:600}
+.quality-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--panel2);border:1px solid var(--border);border-radius:20px;padding:10px 12px;font-size:13px}
+.mobile-bottom{display:none}
+@media(max-width:980px){
+  body{overflow:auto}
+  .app{height:auto;min-height:calc(var(--vh,1vh)*100);grid-template-columns:1fr;padding:12px;gap:12px;overflow:visible}
+  .sidebar{border-radius:28px;max-height:none;overflow:visible}
+  .workspace{border-radius:28px;min-height:calc(var(--vh,1vh)*100 - 24px);padding:14px;overflow:visible}
+  .topbar{position:sticky;top:0;z-index:5;padding:8px 0;background:transparent}
+  .card-area{overflow:visible;display:block}
+  .card{width:100%;min-height:420px;max-height:none;border-radius:30px;padding:22px 20px}
+  .question{font-size:25px}
+  .answer-box{font-size:19px;max-height:none;overflow:visible}
+  .controls{position:sticky;bottom:0;z-index:6;padding:10px 0 6px;background:linear-gradient(180deg,transparent,var(--bg1) 35%)}
+  .btn{padding:12px 13px}
+  .progress-cats{max-height:190px}
+}
+@media(max-width:520px){
+  .stats{grid-template-columns:repeat(4,1fr);gap:7px}
+  .stat{padding:8px 7px;border-radius:14px;text-align:center}
+  .stat b{font-size:16px}
+  .stat span{font-size:9px}
+  .brand{gap:10px}
+  .logo{width:42px;height:42px;border-radius:15px}
+  h1{font-size:20px}
+  .cards-grid{grid-template-columns:1fr}
+  .modal{padding:18px}
+}
+
+.daily-box{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:12px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+.daily-box b{color:var(--text)}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.card.feedback-correct{border-color:rgba(134,239,172,.80);box-shadow:0 0 0 5px rgba(34,197,94,.18),var(--shadow)}
+.card.feedback-unsure{border-color:rgba(250,204,21,.85);box-shadow:0 0 0 5px rgba(250,204,21,.16),var(--shadow)}
+.card.feedback-wrong{border-color:rgba(251,113,133,.85);box-shadow:0 0 0 5px rgba(251,113,133,.16),var(--shadow)}
+.mastery-stars{
+  display:inline-flex;
+  gap:2px;
+  letter-spacing:.03em;
+  color:var(--yellow);
+  font-size:13px;
+  font-weight:900;
+}
+.mastery-stars .off{color:var(--muted);opacity:.45}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:14px 0}
+.summary-stat{background:var(--panel2);border:1px solid var(--border);border-radius:18px;padding:12px}
+.summary-stat b{display:block;font-size:22px}
+.weak-table{width:100%;border-collapse:separate;border-spacing:0 8px;margin-top:12px}
+.weak-table td,.weak-table th{text-align:left;padding:10px;background:var(--panel2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);font-size:13px}
+.weak-table th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.weak-table td:first-child,.weak-table th:first-child{border-left:1px solid var(--border);border-radius:14px 0 0 14px}
+.weak-table td:last-child,.weak-table th:last-child{border-right:1px solid var(--border);border-radius:0 14px 14px 0}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">💊</div>
+      <div>
+        <h1>Flashcards Pharma</h1>
+        <div class="subtitle">Révisions en français • cartes uniques</div>
+      </div>
+    </div>
+
+    <div class="control"><div class="section-title">Vue</div><select id="viewMode"></select></div>
+    <div class="control"><div class="section-title">Ordre</div><select id="orderMode"></select></div>
+    <div class="control"><div class="section-title">Catégorie</div><select id="category"></select></div>
+    <div class="control"><div class="section-title">Filtre</div><select id="filterMode"></select></div>
+    <div class="control"><div class="section-title">Recherche</div><input id="search" placeholder="Rechercher une carte... ex : EI statines" /></div>
+
+    <div>
+      <div class="section-title">Session rapide</div>
+      <div class="quick-grid">
+        <button class="btn small" id="quick10Btn">10 cartes</button>
+        <button class="btn small" id="quick20Btn">20 cartes</button>
+        <button class="btn small" id="quickWeakBtn">Cartes faibles</button>
+        <button class="btn small" id="weakBtn">Points faibles</button>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn primary" id="newSession">↻ Session</button>
+      <button class="btn" id="shuffleBtn">⇄ Mélanger</button>
+      <button class="btn" id="browseBtn">⌘ Explorer</button>
+      <button class="btn" id="themeBtn">☾ Thème</button>
+    </div>
+
+    <div class="quality-row">
+      <span id="qualityText">Vérification : OK</span>
+      <button class="btn small" id="qualityBtn">Détails</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><b id="statSeen">0</b><span>vues</span></div>
+      <div class="stat"><b id="statMastered">0</b><span>maîtrisées</span></div>
+      <div class="stat"><b id="statFav">0</b><span>favoris</span></div>
+      <div class="stat"><b id="statScore">0%</b><span>examen</span></div>
+    </div>
+
+    <div class="daily-box" id="dailyBox">
+      <b>Aujourd’hui</b><br>
+      <span id="dailyText">0 carte révisée</span>
+    </div>
+
+    <div>
+      <div class="section-title">Progression par catégorie</div>
+      <div class="progress-cats" id="catProgress"></div>
+    </div>
+
+    <button class="btn" id="installBtn">📱 Aide installation</button>
+    <button class="btn" id="hideMasteredBtn">Masquer cat. maîtrisées</button>
+    <button class="btn yellow" id="resetCatBtn">Réinitialiser la catégorie</button>
+    <button class="btn red" id="resetBtn">Réinitialiser la progression</button>
+
+    <div class="hint">
+      <b>Raccourcis</b><br>
+      Espace : retourner • ←/→ : naviguer<br>
+      1 : raté • 2 : hésité • 3 : correct<br>
+      S : favori • C : copier • B : explorer
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <div class="topbar">
+      <div class="pill" id="counter">Carte 1/1</div>
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="pill" id="examPill">Examen : 0/0</div>
+      <button class="btn" id="starBtn">☆ Favori</button>
+    </div>
+
+    <section class="card-area" id="cardScreen">
+      <article class="card" id="card">
+        <div class="card-content">
+          <div class="card-meta">
+            <span class="badge" id="catBadge">Catégorie</span>
+            <span class="badge green" id="viewBadge">Révision</span>
+            <span class="badge yellow" id="levelBadge">Niveau 1/5</span>
+            <span class="badge purple" id="masteryBadge">Maîtrise ☆☆☆☆☆</span>
+            <span class="badge purple" id="statusBadge">Unique</span>
+          </div>
+          <div class="card-title" id="cardTitle">Question</div>
+          <h2 class="question" id="question">Question</h2>
+          <div class="answer-label" id="answerLabel"></div>
+          <div class="answer-box" id="answer"></div>
+          <div class="empty-answer" id="emptyAnswer">Appuie sur « Retourner » ou sur Espace pour afficher la réponse.</div>
+          <div class="card-footer">
+            <span id="cardStats">Vues : 0 • Correct : 0 • Hésité : 0 • Raté : 0</span>
+            <span id="lastSeen">Jamais vue</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="list-screen" id="listScreen">
+      <div class="list-tools">
+        <div class="pill" id="listCount">0 cartes</div>
+        <button class="btn small" id="copyVisibleBtn">Copier la carte active</button>
+        <button class="btn small" id="toggleListAnswersBtn">Masquer les réponses</button>
+      </div>
+      <div id="listContent"></div>
+    </section>
+
+    <div class="controls" id="controls">
+      <button class="btn" id="prevBtn">← Précédente</button>
+      <button class="btn primary" id="flipBtn">Retourner</button>
+      <button class="btn" id="nextBtn">Suivante →</button>
+      <button class="btn red" id="wrongBtn">Raté</button>
+      <button class="btn yellow" id="unsureBtn">Hésité</button>
+      <button class="btn green" id="correctBtn">Correct</button>
+      <button class="btn" id="copyBtn">Copier</button>
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal">
+    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+      <div>
+        <h2 id="modalTitle">Explorer les cartes</h2>
+        <p id="modalIntro">Choisis directement une carte.</p>
+      </div>
+      <button class="btn" id="closeModal">Fermer</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+var FLASHCARDS_TEXT = "[Diabète et glycémie]\n\nQ: Mécanisme d'action du Forxiga\nR: Réduit la réabsorption du glucose au niveau rénal et favorise son excrétion urinaire.\n\nQ: Mécanisme d'action de la metformine\nR:\n- Diminue la production hépatique de glucose.\n- Augmente la sensibilité à l'insuline en augmentant la captation périphérique du glucose.\n- Retarde l'absorption intestinale du glucose.\n\nQ: Signes d'une hypoglycémie\nR:\n- Sueurs\n- Pâleur\n- Vertiges\n- Maux de tête\n- Faiblesse\n- Perte d'équilibre\n- Accélération du rythme cardiaque\n- Tachycardie\n\nQ: Mécanisme d'action des sulfamides hypoglycémiants\nR: Fermeture des canaux potassiques ATP-dépendants des cellules β pancréatiques, provoquant une dépolarisation, une entrée de calcium et une libération d'insuline.\n\nQ: Quels sont les sulfamides hypoglycémiants ?\nR:\n- Gliclazide\n- Glimépiride\n\nQ: Contre-indications des sulfamides hypoglycémiants\nR:\n- Insuffisance hépatique sévère\n- Insuffisance rénale sévère\n\nQ: Effets indésirables des sulfamides hypoglycémiants\nR:\n- Hypoglycémie\n- Prise de poids\n\nQ: Quels médicaments peuvent provoquer une hypoglycémie ?\nR:\n- Alcool\n- AINS\n- AVK\n- Certains antibiotiques\n\nQ: Mécanisme d'action des glinides\nR: Même mécanisme que les sulfamides hypoglycémiants.\n\nQ: Quel est le seul glinide ?\nR: Répaglinide.\n\nQ: Particularité des glinides\nR: À prendre avant un repas. Pas de repas = pas de prise.\n\nQ: Mécanisme d'action des analogues du GLP-1\nR:\n- Augmentent l'insulinosécrétion\n- Diminuent la sécrétion de glucagon\n- Ralentissent la vidange gastrique\n- Diminuent la prise alimentaire\n\nQ: Quels sont les analogues du GLP-1 ?\nR:\n- Sémaglutide (Ozempic®, Wegovy®)\n- Liraglutide (Victoza®, Saxenda®)\n- Dulaglutide (Trulicity®)\n\nQ: Contre-indications des analogues du GLP-1\nR:\n- Antécédent de pancréatite\n- Gastroparésie\n\nQ: Effets indésirables des analogues du GLP-1\nR:\n- Troubles digestifs\n- Hypoglycémie\n- Pancréatite\n\nQ: Mécanisme d'action des inhibiteurs de la DPP-4\nR:\n- Augmentent le GLP-1 en empêchant sa dégradation\n- Augmentent l'insulinosécrétion\n- Diminuent la sécrétion de glucagon\n- Ralentissent la vidange gastrique\n- Diminuent l'appétit\n\nQ: Quelles sont les molécules inhibitrices de la DPP-4 ?\nR:\n- Sitagliptine\n- Vildagliptine\n\nQ: Effets indésirables des inhibiteurs de la DPP-4\nR:\n- Céphalées\n- Vertiges\n- Hypoglycémie\n- Pancréatite\n\nQ: Mécanisme d'action des insulines\nR: L'insuline se fixe à son récepteur, favorisant l'entrée du glucose dans les cellules, le stockage sous forme de glycogène et la diminution de la glycémie.\n\nQ: Effets indésirables des insulines\nR:\n- Hypoglycémie\n- Prise de poids\n- Lipodystrophie\n\n[Cardiologie]\n\nQ: Mécanisme d'action du ramipril\nR: Inhibiteur de l'enzyme de conversion qui diminue la transformation de l'angiotensine I en angiotensine II, provoquant une vasodilatation et une diminution de la rétention hydrosodée.\n\nQ: Mécanisme des bêta-bloquants\nR: Antagonistes des récepteurs β-adrénergiques cardiaques entraînant une diminution de la contractilité myocardique et du débit cardiaque.\n\nQ: Traitement de l'insuffisance cardiaque chronique : les 4 fantastiques\nR:\n- Bêta-bloquant\n- IEC\n- Forxiga\n- ARM\n\nQ: Effets indésirables des diurétiques (sauf spironolactone et éplérénone)\nR:\n- Hypovolémie\n- Hypokaliémie\n- Hyponatrémie\n- Hypotension\n\nQ: Effets indésirables d'un IEC\nR:\n- Hypotension\n- Hyperkaliémie\n- Toux irritative chronique réfractaire aux antitussifs\n\nQ: Mécanisme d'action des sartans\nR: Bloquent les récepteurs de l'angiotensine II, provoquant une vasodilatation périphérique.\n\nQ: Effets indésirables des sartans\nR:\n- Hypotension\n- Vertiges\n- Fatigue\n- Douleurs musculo-squelettiques\n\nQ: Mécanisme d'action des diurétiques de l'anse\nR: Blocage du cotransporteur Na+/K+/2Cl− induisant une excrétion importante de sodium, de potassium et d'eau.\n\nQ: Mécanisme d'action des diurétiques thiazidiques\nR: Agissent au niveau du segment proximal du tubule contourné distal, augmentant la diurèse ainsi que l'excrétion du sodium et du potassium.\n\nQ: Effets indésirables des diurétiques thiazidiques\nR:\n- Hypotension orthostatique\n- Hyponatrémie\n- Hypokaliémie\n- Hyperuricémie\n\nQ: Mécanisme d'action des diurétiques hyperkaliémiants\nR: Blocage des récepteurs à l'aldostérone au niveau du tube collecteur rénal, diminuant la réabsorption du sodium et de l'eau ainsi que l'élimination du potassium.\n\nQ: Quels sont les diurétiques hyperkaliémiants ?\nR:\n- Éplérénone\n- Spironolactone\n\nQ: Effets indésirables des diurétiques hyperkaliémiants\nR:\n- Hyperkaliémie\n- Gynécomastie (surtout spironolactone)\n- Douleurs mammaires\n\nQ: Mécanisme d'action des inhibiteurs calciques\nR: Diminuent l'entrée du calcium, entraînant une relaxation des fibres musculaires et une vasodilatation.\n\nQ: Effets indésirables des inhibiteurs calciques\nR:\n- Œdème des membres inférieurs\n- Hypotension\n- Bradycardie\n- Bouffées de chaleur\n\nQ: Quels sont les inhibiteurs calciques ?\nR:\n- Nicardipine\n- Amlodipine\n- Lercanidipine\n- Vérapamil\n- Diltiazem\n\nQ: Mécanisme d'action de l'amiodarone\nR: Bloque les canaux potassiques cardiaques, provoquant une hyperpolarisation des cellules cardiaques et un ralentissement de la conduction électrique. Augmente la durée du potentiel d'action et la période réfractaire.\n\nQ: Contre-indications de l'amiodarone\nR:\n- Bradycardie sévère\n- Troubles de la conduction\n- Dysthyroïdie\n\nQ: Effets indésirables de l'amiodarone\nR:\n- Photosensibilité\n- Atteinte hépatique\n- Atteinte pulmonaire\n- Troubles visuels\n- QT long\n\nQ: Que doit-on dire au patient lors de l'introduction d'une amiodarone ?\nR: Attention au soleil. Utiliser systématiquement une protection solaire et la renouveler en cas d'exposition aux UV.\n\nQ: Quels sont les suivis à réaliser avec un traitement à base d'amiodarone ?\nR:\n- ECG\n- TSH\n- ASAT\n- ALAT\n- Gamma-GT\n- Kaliémie\n- Surveillance pulmonaire\n- Surveillance ophtalmologique\n\n[Anticoagulants et antiagrégants]\n\nQ: Que dire pour éviter les hémorragies ?\nR:\n- Attention à la cuisine et au jardinage\n- Utiliser une brosse à dents à poils souples\n- Attention au rasage\n\nQ: Mécanisme d'action des AVK\nR: Inhibent l'action de la vitamine K nécessaire à la fabrication des facteurs de coagulation II, VII, IX et X, diminuant ainsi la coagulation et le risque de formation de caillots.\n\nQ: Effets indésirables des AVK\nR:\n- Hématomes\n- Épistaxis\n- Saignements\n- Gingivorragies\n\nQ: Quelles sont les molécules des AVK ?\nR:\n- Warfarine\n- Fluindione\n\nQ: Quel est le suivi à réaliser pour la prise d'un AVK ?\nR: L'INR.\n\nQ: Mécanisme d'action des AOD\nR: Inhibent de façon spécifique et directe la thrombine (facteur II) et le facteur X.\n\nQ: Quels sont les AOD ?\nR:\n- Rivaroxaban\n- Apixaban\n- Dabigatran\n\nQ: Effets indésirables des AOD\nR:\n- Hématomes\n- Saignements\n- Troubles digestifs\n\nQ: Particularités des AOD\nR:\n- Pas de suivi biologique systématique\n- Métabolisés par les CYP3A4\n- Attention à la fonction rénale\n\nQ: Mécanisme d'action des antiagrégants plaquettaires\nR:\n- Inhibition irréversible de la COX-1 → diminution de la synthèse du thromboxane A2 → diminution de l'agrégation plaquettaire (aspirine)\nOU\n- Blocage des récepteurs P2Y12 à l'ADP sur les plaquettes → inhibition de l'agrégation plaquettaire (clopidogrel)\n\nQ: Contre-indications des antiagrégants plaquettaires\nR:\n- Ulcère actif\n- Saignement actif\n\n[Dyslipidémies]\n\nQ: Traitement post-infarctus du myocarde (BASIC)\nR:\nB : Bêta-bloquant\nA : Antiagrégant\nS : Statine\nI : IEC\nC : Contrôle des facteurs de risque\n\nQ: Que fait baisser le cholestérol ?\nR: Le LDL cholestérol.\n\nQ: Mécanisme d'action des statines\nR: Inhibition de l'HMG-CoA réductase responsable de la synthèse du cholestérol.\n\nQ: Contre-indications des statines\nR:\n- Grossesse\n- Allaitement\n- Maladie hépatique évolutive\n\nQ: Particularités des statines\nR: Métabolisées par les CYP3A4, ce qui expose à de nombreuses interactions médicamenteuses, notamment avec les inhibiteurs ou inducteurs enzymatiques.\n\nQ: Interactions médicamenteuses des statines\nR:\n- Macrolides\n- Antifongiques azolés\n- Jus de pamplemousse\n\nQ: Mécanisme d'action des fibrates\nR:\nActivation des récepteurs PPAR-α entraînant :\n- Augmentation de la dégradation des triglycérides\n- Diminution des VLDL\n- Augmentation des HDL\n\nQ: Contre-indications des fibrates\nR:\n- Insuffisance hépatique\n- Insuffisance rénale sévère\n- Maladie biliaire\n\nQ: Mécanisme d'action de l'ézétimibe\nR: Blocage du transporteur NPC1L1 au niveau intestinal, diminuant l'absorption du cholestérol.\n\nQ: Effets indésirables de l'ézétimibe\nR:\n- Troubles digestifs\n- Céphalées\n- Vertiges\n\n[Neurologie et Parkinson]\n\nQ: Mécanisme d'action du Parkinane\nR: Anticholinergique qui bloque l'effet de l'acétylcholine et réduit les troubles moteurs.\n\nQ: Effets indésirables du Parkinane\nR:\n- Sécheresse buccale\n- Rétention urinaire\n- Mydriase\n- Constipation\n\nQ: Mécanisme d'action du Modopar\nR: Précurseur de la dopamine capable de traverser la barrière hémato-encéphalique et de combler le déficit en dopamine.\n\nQ: Mécanisme d'action de la gabapentine\nR: Se lie aux canaux calciques voltage-dépendants, diminuant l'entrée de calcium et l'excitabilité neuronale.\n\nQ: Effets indésirables de la gabapentine\nR:\n- Hypotension artérielle\n- Vertiges\n- Somnolence\n- Fatigue\n\nQ: Mécanisme d'action du Sifrol\nR: Agoniste dopaminergique D2 et D3 qui mime l'action de la dopamine.\n\nQ: Effets indésirables du Sifrol\nR:\n- Somnolence\n- Nausées\n- Hypotension orthostatique\n\nQ: Mécanisme d'action de l'Azilect\nR: Inhibiteur sélectif et irréversible de la MAO-B qui dégrade la dopamine.\n\nQ: Effets indésirables de la rasagiline\nR:\n- Hypotension orthostatique\n- Somnolence\n- Céphalées\n\nQ: Effet \"on-off\" de la maladie de Parkinson\nR:\n- ON : patient mobile avec quelques mouvements anormaux.\n- OFF : signes d'akinésie et difficultés à la marche.\n\nQ: Qu'est-ce qu'une dyskinésie de fin de dose ?\nR: Mouvements involontaires anormaux et saccadés qui surviennent avant la prise d'une nouvelle dose.\n\nQ: Particularités de la maladie de Parkinson\nR:\n- Troubles de la déglutition\n- Augmentation du risque de dépendance\n\nQ: RHD de la maladie de Parkinson\nR:\n- Suivi kiné / ergothérapeute\n- Adaptation de l'habitat\n- Surveillance des comportements à risque\n- Soutien psychologique\n\nQ: Quand prendre la lévodopa ?\nR: 30 minutes avant le repas.\n\nQ: Quelles sont les contre-indications de l'Azilect ?\nR:\n- Tramadol\n- Triptans\n- Millepertuis\n\nQ: Effets indésirables des antipsychotiques de 1re génération\nR:\n- Sédation\n- Troubles de l'humeur\n- Inversion de l'humeur\n- Dyskinésies et dystonies aiguës dans les 48 premières heures\n- Syndrome parkinsonien\n- Prise de poids\n- Hypoglycémie\n\n[Psychiatrie]\n\nQ: Mécanisme d'action de la mirtazapine\nR: Antagoniste α2 présynaptique central augmentant la neurotransmission noradrénergique et sérotoninergique centrale.\n\nQ: Effets indésirables de la mirtazapine\nR:\n- Prise de poids\n- Somnolence\n- Sédation\n- Sécheresse buccale\n- Céphalées\n\nQ: Mécanisme d'action des ISRS\nR: Bloquent la recapture de la sérotonine au niveau présynaptique, ce qui augmente sa concentration et stimule plus longtemps les récepteurs postsynaptiques.\n\nQ: Quels sont les ISRS ?\nR:\n- Fluvoxamine\n- Fluoxétine\n- Paroxétine\n- Sertraline\n- Citalopram\n- Escitalopram\n\nQ: Effets indésirables des ISRS\nR:\n- Syndrome sérotoninergique\n- Troubles de la libido\n- Levée d'inhibition suicidaire\n\nQ: Mécanisme d'action des benzodiazépines\nR: Fixation sur les récepteurs GABA-A augmentant l'entrée de chlore, ce qui provoque une hyperpolarisation et une diminution de l'activité neuronale.\n\nQ: Effets indésirables des benzodiazépines\nR:\n- Dépendance\n- Somnolence\n- Dépression respiratoire\n\nQ: Contre-indications des APA\nR:\n- Antécédents de convulsions\n- Antécédents d'insuffisance hépatique\n\nQ: Effets indésirables des APA\nR:\n- Prise de poids\n- Hyperglycémie\n- Syndrome extrapyramidal\n- Troubles du contrôle des impulsions\n\nQ: Quels sont les signes d'un syndrome extrapyramidal ?\nR:\n- Akinésie\n- Rigidité\n- Tremblement de repos\n\nQ: Mécanisme d'action des IRSNa\nR:\n- Inhibition du recaptage de la sérotonine (SERT)\n- Inhibition du recaptage de la noradrénaline (NET)\n→ augmentation de leur concentration synaptique\n\nQ: Indications des IRSNa\nR:\n- Dépression\n- Anxiété\n- Douleurs neuropathiques\n\nQ: Contre-indications des IRSNa\nR:\n- Association avec les IMAO-B\n- Insuffisance hépatique sévère\n- Insuffisance rénale chronique sévère\n- HTA non équilibrée\n\nQ: Quels sont les IRSNa ?\nR:\n- Duloxétine\n- Venlafaxine\n- Milnacipran\n\nQ: Effets indésirables des IRSNa\nR:\n- Syndrome sérotoninergique\n- Hyponatrémie\n- Augmentation de la fréquence cardiaque\n- Augmentation de la pression artérielle\n\nQ: Qu'est-ce que la schizophrénie ?\nR: Pathologie chronique dans laquelle une personne a du mal à distinguer ce qui est réel de ce qui ne l'est pas. Elle se manifeste par une alternance de symptômes positifs, comme les hallucinations et les délires, et de symptômes négatifs, comme le repli social et la perte de motivation.\n\nQ: Mécanisme d'action des antipsychotiques de 1re génération\nR:\nBlocage des récepteurs dopaminergiques D2\n→ diminution de l'activité dopaminergique\n→ réduction des hallucinations, délires et agitation psychotique.\n\nQ: Contre-indications des antipsychotiques de 1re génération\nR:\n- Épilepsie\n- Parkinson\n- Glaucome aigu\n- ATCD d'agranulocytose\n- Hypertrophie prostatique\n\nQ: Quels sont les antipsychotiques ?\nR:\n- Chlorpromazine\n- Halopéridol\n- Sulpiride\n- Clozapine\n- Olanzapine\n- Rispéridone\n- Aripiprazole\n\n[Thyroïde]\n\nQ: Quelle est l'indication du Levothyrox ?\nR: Hypothyroïdie.\n\nQ: Quel est le mécanisme d'action du Levothyrox ?\nR: Hormone thyroïdienne de synthèse (T4) transformée en T3 active, augmentant le métabolisme cellulaire.\n\nQ: Contre-indications du Levothyrox\nR:\n- Cardiopathie décompensée\n- Coronaropathie\n\nQ: Effets indésirables du Levothyrox\nR:\n- Hyperthyroïdie\n- Aggravation d'une cardiopathie\n\nQ: Quels sont les signes d'une hypothyroïdie ?\nR:\n- AEG\n- Perte de poids\n- Asthénie\n- Hyperthermie\n- Polydipsie\n- Irritabilité\n- Tachycardie\n- Palpitations\n- Œdèmes des membres inférieurs\n- Bruit\n- Diarrhée\n\nQ: Quels sont les signes d'une hyperthyroïdie ?\nR:\n\n- Prise de poids\n- Asthénie\n- Frilosité\n- Somnolence\n- Bradycardie\n- Myxœdème\n- Constipation\n- Peau pâle et jaunâtre\n\nQ: Comment prendre le Levothyrox ?\nR: À jeun le matin.\n\nQ: Mécanisme d'action des ATS (antithyroïdiens de synthèse)\nR: Inhibition de la thyroperoxydase (TPO) → diminution de la synthèse des hormones thyroïdiennes T3 et T4.\n\nQ: Contre-indications des ATS\nR:\n- Cancer de la thyroïde\n- Antécédent d'agranulocytose\n- Atteinte hépatique sévère\n\nQ: Effets indésirables des ATS\nR:\n- Agranulocytose\n- Atteinte hépatique\n- Prurit\n- Hypothyroïdie\n\nQ: Quels sont les ATS ?\nR:\n- Carbimazole\n- Thiamazole\n\n[Contraception]\n\nQ: Mécanisme d'action des pilules contraceptives\nR:\nŒstrogènes :\n- Inhibition de la sécrétion de FSH\n- Inhibition de la croissance folliculaire\n- Inhibition de l'ovulation (via LH)\n\nProgestatifs :\n- Diminution de la LH et de la FSH\n- Épaississement de la glaire cervicale\n- Modification de l'endomètre\n\nQ: Effets indésirables des pilules contraceptives\nR:\n- Aggravation d'une dyslipidémie\n- Effet diabétogène\n- Hémorragies\n\nQ: Quelles sont les pilules progestatives microdosées ?\nR:\n- Lévonorgestrel (Microval®)\n- Désogestrel (Cerazette®, Antigone®, Optimizette®)\n- Drospirénone (Slinda®)\n\nQ: Quand prescrire une pilule progestative microdosée ?\nR:\nEn cas de contre-indication aux pilules estroprogestatives :\n- Risque métabolique\n- Risque vasculaire\n- Tabagisme\n- ATCD thromboembolique\n- Surpoids\n- Allaitement\n\nQ: Quel est le délai d'oubli pour Microval® ?\nR: 3 heures.\n\nQ: Contre-indications des progestatifs microdosés\nR:\n- TEV (thromboembolie veineuse)\n- Insuffisance hépatique\n- ictere chronique \n- cancer génitaux et du sein\n- hda non contrôlé ou qui apparait pendant le traitement\n\nQ: Quels sont les contre-indications des pilules combinées ?\nR:\n- ATCD de thrombose\n- AVC ou infarctus\n- Migraine avec aura\n- Cancer hormono-dépendant\n- Insuffisance hépatique sévère\n- HTA non équilibrée\n- Tabagisme après 35 ans (> 15 cigarettes/j)\n\n[Sevrage tabagique]\n\nQ: Signes d'un surdosage en nicotine\nR:\n- Palpitations\n- Tachycardie\n- Insomnie\n\nQ: Utilisation d'un comprimé à sucer de nicotine\nR:\n- Placer le comprimé dans la bouche.\n- Le déplacer d'un côté à l'autre jusqu'à dissolution complète (20 à 30 min).\n- Ne pas l'avaler ni le croquer.\n- En cas de hoquet ou de brûlure gastrique, le sucer plus lentement.\n\nQ: Utilisation d'un patch de nicotine\nR:\n- Appliquer sur une peau propre, saine et sans poils dès le réveil.\n\nQ: Précaution d'utilisation d'un patch de nicotine\nR: Le patch ne doit pas être appliqué sur la même zone tous les jours.\n\nQ: Mécanisme d'action des substituts nicotiniques\nR: Agonistes des récepteurs nicotiniques permettant de diminuer l'envie de fumer.\n\n[Goutte]\n\nQ: Mécanisme d'action de l'allopurinol\nR: Inhibe la xanthine oxydase responsable de la production d'acide urique, ce qui diminue la concentration d'acide urique.\n\nQ: Mécanisme d'action du fébuxostat\nR: Même mécanisme que l'allopurinol.\n\nQ: Effets indésirables de l'allopurinol\nR:\n- Augmentation de la TSH\n- Rash\n- Syndrome de Stevens-Johnson / Lyell\n\n[Digestif et antispasmodiques]\n\nQ: Mécanisme d'action du Spasfon\nR: Diminue la contractilité des fibres musculaires lisses responsables des spasmes digestifs, urinaires, etc.\n\n[Vitamines et électrolytes]\n\nQ: Quand prendre le Kayexalate ?\nR: Pendant le repas.\n\nQ: Comment prendre le cholécalciférol ?\nR: Avec un repas riche en graisse.\n\n[Ophtalmologie]\n\nQ: Glaucome chronique\nR: Glaucome à angle ouvert.\n\nQ: Glaucome aigu\nR: Glaucome à angle fermé.\n\n[Anti-épileptiques]\n\nQ: Mécanisme d'action des anti-épileptiques GABAergiques\nR: Les antiépileptiques GABAergiques augmentent l'action inhibitrice du GABA dans le cerveau, ce qui diminue l'excitabilité neuronale et limite la survenue des crises d'épilepsie.\n\nQ: Quelles sont les molécules anti-épileptiques GABAergiques ?\nR:\n- Clonazépam\n- Clobazam\n- Diazépam\n- Phénobarbital\n- Vigabatrine\n- Tiagabine\n- Valproate de sodium\n\nQ: Contre-indications des anti-épileptiques GABAergiques\nR:\n- Insuffisance respiratoire sévère\n- Syndrome d'apnée du sommeil\n- Insuffisance hépatique sévère\n- Myasthénie\n- Grossesse pour le valproate : double protection nécessaire lors des rapports sexuels\n\nQ: Effets indésirables des anti-épileptiques GABAergiques\nR:\n- Détresse respiratoire\n- Troubles du comportement\n- Somnolence\n- Vertiges\n- Ataxie\n\nQ: Quelle est la précaution à prendre avec le valproate ?\nR: Le valproate est tératogène. Il ne doit pas être prescrit chez une femme ayant un désir de grossesse.\n\nQ: Mécanisme d'action des bloqueurs des canaux calciques en neurologie\nR: Ils bloquent les canaux calciques, ce qui diminue la concentration de Ca²⁺ dans les neurones. Le calcium entre en moins grande quantité, donc moins de neurotransmetteurs excitateurs sont libérés, ce qui diminue l'excitabilité neuronale.\n\nQ: Quelles sont les molécules des bloqueurs des canaux calciques en neurologie ?\nR:\n- Gabapentine\n- Prégabaline\n\nQ: Quelles sont les particularités de la prégabaline ?\nR: La prégabaline peut provoquer une dépendance et présente un risque cardiaque, notamment avec l'apparition possible d'œdèmes.\n\nQ: Mécanisme d'action des modulateurs de la protéine SV2A\nR: Se fixe sur la protéine SV2A, ce qui provoque une modification des vésicules synaptiques et diminue la libération excessive des neurotransmetteurs excitateurs. On obtient donc une réduction de l'excitabilité neuronale et une stabilisation de l'activité neuronale.\n\nQ: Quelle est la molécule de la classe des modulateurs de SV2A ?\nR:\n- Lévétiracétam\n\nQ: Effets indésirables des modulateurs de SV2A\nR:\n- Irritabilité\n- Nervosité\n- Agressivité\n- Anxiété\n- Dépression\n- Troubles du comportement\n- Somnolence\n- Vertiges\n- Fatigue\n- Asthénie\n\nQ: À quoi faut-il faire attention lors de la prescription de Keppra® ?\nR: Il faut faire attention en cas de dépression et d'idées suicidaires.\n\n[Antalgiques]\n\nQ: Mécanisme d'action du paracétamol\nR: Inhibition des COX, ce qui diminue la production de thromboxane A2 responsable de la douleur et de la fièvre.";
+var STORAGE_KEY = "pharma-flashcards-sobre-plus-ios-safe-v1";
+var viewModes = ["Révision", "Examen", "Liste complète"];
+var orderModes = ["Ordre original", "Aléatoire", "Difficile d'abord", "Jamais vues d'abord"];
+var filterModes = ["Toutes", "Jamais vues", "Ratées", "À revoir", "Maîtrisées", "Favoris"];
+var CARDS = parseCards(FLASHCARDS_TEXT);
+var VALIDATION = validateCards(CARDS);
+var state = loadState();
+var session = [];
+var pos = 0;
+var current = 0;
+var flipped = false;
+var exam = {answered:0, know:0, unsure:0, fail:0, wrongCards:[], unsureCards:[]};
+var lastSessionBase = [];
+
+function setVh(){document.documentElement.style.setProperty("--vh",(window.innerHeight*0.01)+"px");}
+setVh(); window.addEventListener("resize",setVh);
+
+function el(id){return document.getElementById(id);}
+function safeGet(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function safeSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function safeRemove(k){try{localStorage.removeItem(k);}catch(e){}}
+function escapeHTML(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function startsWith(str,prefix){return str.slice(0,prefix.length)===prefix;}
+
+function parseCards(text){
+  var lines = String(text).replace(/\r/g,"").split("\n");
+  var cards = [], category = "Général", current = null, mode = "";
+  function pushCurrent(){
+    if(current){
+      current.question = trim(current.question);
+      current.answer = trim(current.answer);
+      if(current.question || current.answer) cards.push(current);
+    }
+  }
+  for(var i=0;i<lines.length;i++){
+    var raw = lines[i];
+    var line = trim(raw);
+    var cat = line.match(/^\[(.+?)\]$/);
+    if(cat){pushCurrent(); current=null; mode=""; category=cat[1]; continue;}
+    if(startsWith(line,"Q:")){pushCurrent(); current={category:category, question:trim(line.slice(2)), answer:"", id:cards.length}; mode="q"; continue;}
+    if(startsWith(line,"R:")){if(!current) current={category:category,question:"",answer:"",id:cards.length}; current.answer=trim(line.slice(2)); mode="r"; continue;}
+    if(current && mode==="q") current.question += (current.question?"\n":"") + raw;
+    else if(current && mode==="r") current.answer += (current.answer?"\n":"") + raw;
+  }
+  pushCurrent();
+  for(var j=0;j<cards.length;j++) cards[j].id = j;
+  return cards;
+}
+function trim(s){return String(s).replace(/^\s+|\s+$/g,"");}
+
+function validateCards(cards){
+  var errors=[], warnings=[], seen={};
+  for(var i=0;i<cards.length;i++){
+    if(!cards[i].question) errors.push("Carte "+(i+1)+" : question vide.");
+    if(!cards[i].answer) errors.push("Carte "+(i+1)+" : réponse vide.");
+    var key=cards[i].question.toLowerCase().replace(/\s+/g," ");
+    if(seen[key]!==undefined) warnings.push("Doublon possible : cartes "+(seen[key]+1)+" et "+(i+1)+" — "+cards[i].question);
+    else seen[key]=i;
+  }
+  return {errors:errors,warnings:warnings};
+}
+
+function baseState(){
+  var s={
+    seen:[],correct:[],wrong:[],unsure:[],stars:[],box:[],lastSeen:[],
+    theme:"dark",viewMode:"Révision",orderMode:"Ordre original",category:"Toutes",filterMode:"Toutes",
+    hideMasteredCats:false,listShowAnswers:true,
+    daily:{date:todayKey(),seen:0,correct:0,unsure:0,wrong:0}
+  };
+  for(var i=0;i<CARDS.length;i++){s.seen[i]=0;s.correct[i]=0;s.wrong[i]=0;s.unsure[i]=0;s.stars[i]=false;s.box[i]=1;s.lastSeen[i]="";}
+  return s;
+}
+function loadState(){
+  var b=baseState(), raw=safeGet(STORAGE_KEY);
+  if(!raw) return b;
+  try{
+    var s=JSON.parse(raw);
+    for(var k in b) if(b.hasOwnProperty(k) && s[k]!==undefined) b[k]=s[k];
+    for(var i=0;i<CARDS.length;i++){
+      if(b.seen[i]===undefined)b.seen[i]=0;
+      if(b.correct[i]===undefined)b.correct[i]=0;
+      if(b.wrong[i]===undefined)b.wrong[i]=0;
+      if(b.unsure[i]===undefined)b.unsure[i]=0;
+      if(b.stars[i]===undefined)b.stars[i]=false;
+      if(b.box[i]===undefined)b.box[i]=1;
+      if(b.lastSeen[i]===undefined)b.lastSeen[i]="";
+    }
+    if(b.hideMasteredCats===undefined)b.hideMasteredCats=false;
+    if(b.listShowAnswers===undefined)b.listShowAnswers=true;
+    if(!b.daily || b.daily.date!==todayKey()) b.daily={date:todayKey(),seen:0,correct:0,unsure:0,wrong:0};
+    return b;
+  }catch(e){return b;}
+}
+function save(){safeSet(STORAGE_KEY,JSON.stringify(state));}
+function toast(msg){var t=el("toast"); t.textContent=msg; t.className="toast show"; setTimeout(function(){t.className="toast";},1500);}
+
+function init(){
+  if(state.theme==="light") document.body.className="light";
+  fillSelect("viewMode",viewModes,state.viewMode);
+  fillSelect("orderMode",orderModes,state.orderMode);
+  fillSelect("filterMode",filterModes,state.filterMode);
+  fillCategory();
+  el("viewMode").onchange=function(){state.viewMode=this.value;save();newSession();};
+  el("orderMode").onchange=function(){state.orderMode=this.value;save();newSession();};
+  el("category").onchange=function(){state.category=this.value;save();newSession();};
+  el("filterMode").onchange=function(){state.filterMode=this.value;save();newSession();};
+  el("search").oninput=function(){newSession();};
+  el("newSession").onclick=function(){exam={answered:0,know:0,unsure:0,fail:0};newSession();};
+  el("shuffleBtn").onclick=function(){shuffle(session);pos=0;current=session[0]||0;flipped=false;render();toast("Cartes mélangées");};
+  el("browseBtn").onclick=openBrowser;
+  el("themeBtn").onclick=toggleTheme;
+  el("resetBtn").onclick=resetProgress;
+  el("installBtn").onclick=openInstallHelp;
+  el("qualityBtn").onclick=openQuality;
+  el("quick10Btn").onclick=function(){quickSession(10);};
+  el("quick20Btn").onclick=function(){quickSession(20);};
+  el("quickWeakBtn").onclick=function(){quickWeakSession();};
+  el("weakBtn").onclick=openWeakPoints;
+  el("hideMasteredBtn").onclick=toggleHideMasteredCats;
+  el("resetCatBtn").onclick=resetCurrentCategory;
+  el("toggleListAnswersBtn").onclick=toggleListAnswers;
+  el("closeModal").onclick=closeModal;
+  el("overlay").onclick=function(e){if(e.target.id==="overlay")closeModal();};
+  el("prevBtn").onclick=prev;
+  el("nextBtn").onclick=next;
+  el("flipBtn").onclick=flip;
+  el("wrongBtn").onclick=function(){mark("wrong");};
+  el("unsureBtn").onclick=function(){mark("unsure");};
+  el("correctBtn").onclick=function(){mark("correct");};
+  el("copyBtn").onclick=copyCurrent;
+  el("copyVisibleBtn").onclick=copyCurrent;
+  el("starBtn").onclick=toggleStar;
+  document.addEventListener("keydown",shortcuts);
+  setupManifest();
+  updateQualityText();
+  newSession();
+}
+function fillSelect(id,arr,val){var h="";for(var i=0;i<arr.length;i++)h+='<option>'+escapeHTML(arr[i])+'</option>';el(id).innerHTML=h;el(id).value=val;}
+function categories(){var o={}, a=["Toutes"];for(var i=0;i<CARDS.length;i++)o[CARDS[i].category]=true;for(var k in o)if(o.hasOwnProperty(k))a.push(k);return a;}
+function fillCategory(){var a=categories(), h="";for(var i=0;i<a.length;i++)h+='<option>'+escapeHTML(a[i])+'</option>';el("category").innerHTML=h;if(a.indexOf(state.category)<0)state.category="Toutes";el("category").value=state.category;}
+function shortcuts(e){
+  var tag=(e.target&&e.target.tagName)||"";
+  if(tag==="INPUT"||tag==="SELECT") return;
+  if(e.code==="Space"){e.preventDefault();flip();}
+  if(e.key==="ArrowRight") next();
+  if(e.key==="ArrowLeft") prev();
+  if(e.key==="1") mark("wrong");
+  if(e.key==="2") mark("unsure");
+  if(e.key==="3") mark("correct");
+  if(e.key.toLowerCase()==="s") toggleStar();
+  if(e.key.toLowerCase()==="c") copyCurrent();
+  if(e.key.toLowerCase()==="b") openBrowser();
+}
+
+function isPitfall(i){
+  var s=(CARDS[i].question+" "+CARDS[i].answer).toLowerCase();
+  var keys=["contre-indication","contre-indications","hypo","hyper","agranulocytose","syndrome","grossesse","valproate","inr","avk","amiodarone","qt long","pancréatite","keppra","suicid","oubli","surdosage","kaliémie","dépression","thrombo","hémorrag"];
+  for(var k=0;k<keys.length;k++) if(s.indexOf(keys[k])>=0) return true;
+  return false;
+}
+function filtered(){
+  var cat=el("category").value, filt=el("filterMode").value, parsed=parseSearch(el("search").value);
+  var q=parsed.text.toLowerCase();
+  var arr=[];
+  for(var i=0;i<CARDS.length;i++){
+    var keep=true;
+    if(cat!=="Toutes" && CARDS[i].category!==cat) keep=false;
+    if(filt==="Jamais vues" && Number(state.seen[i]||0)>0) keep=false;
+    if(filt==="Ratées" && Number(state.wrong[i]||0)<=0) keep=false;
+    if(filt==="À revoir" && !(Number(state.wrong[i]||0)>Number(state.correct[i]||0) || Number(state.box[i]||1)<=2 || Number(state.unsure[i]||0)>Number(state.correct[i]||0))) keep=false;
+    if(filt==="Maîtrisées" && Number(state.box[i]||1)<5) keep=false;
+    if(filt==="Favoris" && !state.stars[i]) keep=false;
+    if(parsed.type && !matchesSearchType(CARDS[i],parsed.type)) keep=false;
+    if(q){
+      var blob=(CARDS[i].category+" "+CARDS[i].question+" "+CARDS[i].answer).toLowerCase();
+      if(blob.indexOf(q)<0) keep=false;
+    }
+    if(keep) arr.push(i);
+  }
+  return order(arr);
+}
+function order(arr){
+  var mode=el("orderMode").value;
+  if(mode==="Aléatoire") shuffle(arr);
+  else if(mode==="Difficile d'abord") arr.sort(function(a,b){return difficultyScore(b)-difficultyScore(a);});
+  else if(mode==="Jamais vues d'abord") arr.sort(function(a,b){return (state.seen[a]||0)-(state.seen[b]||0);});
+  return arr;
+}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+
+function newSession(){
+  session=filtered();
+  lastSessionBase=session.slice(0);
+  exam={answered:0, know:0, unsure:0, fail:0, wrongCards:[], unsureCards:[]};
+  pos=0; current=session[0]||0; flipped=false; render();
+}
+function render(){
+  updateStats(); renderCategoryProgress();
+  var isList = state.viewMode==="Liste complète";
+  el("cardScreen").style.display=isList?"none":"grid";
+  el("controls").style.display=isList?"none":"flex";
+  el("listScreen").className=isList?"list-screen show":"list-screen";
+  if(isList){renderList();return;}
+  if(session.length===0){renderEmpty();return;}
+  if(pos<0)pos=0;if(pos>=session.length)pos=session.length-1;
+  current=session[pos];
+  var c=CARDS[current];
+  el("card").className=flipped?"card answer-mode":"card";
+  el("catBadge").innerHTML=categoryIcon(c.category)+" "+escapeHTML(c.category);
+  el("viewBadge").textContent=state.viewMode;
+  el("levelBadge").textContent="Niveau "+(state.box[current]||1)+"/5";
+  el("masteryBadge").innerHTML='Maîtrise '+masteryStars(current);
+  el("statusBadge").textContent="Carte unique";
+  el("statusBadge").className="badge purple";
+  el("cardTitle").textContent=state.stars[current]?"★ Carte favorite":"Question";
+  el("question").innerHTML=highlight(c.question);
+  if(flipped){el("answerLabel").textContent="Réponse"; el("answer").innerHTML=highlight(c.answer); el("emptyAnswer").style.display="none";}
+  else{el("answerLabel").textContent=""; el("answer").innerHTML=""; el("emptyAnswer").style.display="block";}
+  el("cardStats").textContent="Vues : "+(state.seen[current]||0)+" • Correct : "+(state.correct[current]||0)+" • Hésité : "+(state.unsure[current]||0)+" • Raté : "+(state.wrong[current]||0);
+  el("lastSeen").textContent=state.lastSeen[current]?"Dernière vue : "+state.lastSeen[current]:"Jamais vue";
+  el("counter").textContent="Carte "+(pos+1)+"/"+session.length+" • "+session.length+" uniques";
+  el("progressBar").style.width=session.length?(((pos+1)/session.length)*100)+"%":"0%";
+  el("starBtn").textContent=state.stars[current]?"★ Favori":"☆ Favori";
+  el("examPill").textContent=state.viewMode==="Examen" ? ("Examen : "+exam.answered+"/"+session.length+" • "+examScore()+"%") : ("Total : "+CARDS.length+" cartes");
+  el("flipBtn").textContent=flipped?"Masquer":"Retourner";
+}
+function renderEmpty(){
+  el("catBadge").textContent="Aucune carte";
+  el("viewBadge").textContent=state.viewMode;
+  el("levelBadge").textContent="0/5";
+  el("statusBadge").textContent="Filtre vide";
+  el("cardTitle").textContent="Aucune carte trouvée";
+  el("question").textContent="Change la catégorie, le filtre ou la recherche.";
+  el("answerLabel").textContent="";
+  el("answer").innerHTML="";
+  el("emptyAnswer").style.display="none";
+  el("cardStats").textContent="";
+  el("lastSeen").textContent="";
+  el("counter").textContent="0 carte";
+  el("progressBar").style.width="0%";
+}
+function flip(){
+  if(!session.length || state.viewMode==="Liste complète") return;
+  flipped=!flipped;
+  if(flipped){state.seen[current]=Number(state.seen[current]||0)+1; state.lastSeen[current]=nowLabel(); save();}
+  render();
+}
+function next(){if(!session.length)return; pos=(pos+1)%session.length; current=session[pos]; flipped=false; render();}
+function prev(){if(!session.length)return; pos=(pos-1+session.length)%session.length; current=session[pos]; flipped=false; render();}
+function mark(type){
+  if(!session.length || state.viewMode==="Liste complète") return;
+
+  if(!flipped){
+    state.seen[current]=Number(state.seen[current]||0)+1;
+  }
+  state.lastSeen[current]=nowLabel();
+
+  if(type==="correct"){
+    state.correct[current]=Number(state.correct[current]||0)+1;
+    state.box[current]=Math.min(5,Number(state.box[current]||1)+1);
+    if(state.viewMode==="Examen") exam.know++;
+    animateFeedback("correct");
+    toast("Correct : progression enregistrée");
+  }
+  else if(type==="unsure"){
+    state.unsure[current]=Number(state.unsure[current]||0)+1;
+    state.box[current]=Math.max(1,Number(state.box[current]||1));
+    if(state.viewMode==="Examen"){
+      exam.unsure++;
+      if(exam.unsureCards.indexOf(current)<0) exam.unsureCards.push(current);
+    }
+    animateFeedback("unsure");
+    toast("Hésité : progression enregistrée");
+  }
+  else{
+    state.wrong[current]=Number(state.wrong[current]||0)+1;
+    state.box[current]=1;
+    if(state.viewMode==="Examen"){
+      exam.fail++;
+      if(exam.wrongCards.indexOf(current)<0) exam.wrongCards.push(current);
+    }
+    animateFeedback("wrong");
+    toast("Raté : carte mise à revoir");
+  }
+
+  updateDaily(type);
+
+  if(state.viewMode==="Examen") exam.answered++;
+  save();
+  updateStats();
+  renderCategoryProgress();
+
+  if(state.viewMode==="Examen" && exam.answered>=session.length){
+    setTimeout(function(){showExamSummary();},260);
+  }else{
+    setTimeout(function(){next();},220);
+  }
+}
+function toggleStar(){if(!session.length)return; state.stars[current]=!state.stars[current]; save(); toast(state.stars[current]?"Ajouté aux favoris":"Retiré des favoris"); render();}
+function nowLabel(){return new Date().toLocaleString("fr-FR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"});}
+function examScore(){var total=exam.know+exam.unsure+exam.fail;if(!total)return 0;return Math.round((exam.know+0.5*exam.unsure)/total*100);}
+
+function updateStats(){
+  var seen=0, mastered=0, fav=0;
+  for(var i=0;i<CARDS.length;i++){if(state.seen[i]>0)seen++; if(state.box[i]>=5)mastered++; if(state.stars[i])fav++;}
+  el("statSeen").textContent=seen+"/"+CARDS.length;
+  el("statMastered").textContent=mastered;
+  el("statFav").textContent=fav;
+  el("statScore").textContent=examScore()+"%";
+}
+function renderCategoryProgress(){
+  var cats=categories(), html="";
+  for(var c=1;c<cats.length;c++){
+    var cat=cats[c], total=0, seen=0, mastered=0;
+    for(var i=0;i<CARDS.length;i++) if(CARDS[i].category===cat){total++; if(state.seen[i]>0)seen++; if(state.box[i]>=5)mastered++;}
+    var pct=total?Math.round(seen/total*100):0;
+    html += '<div class="cat-line" data-cat="'+escapeHTML(cat)+'"><div class="cat-head"><span>'+categoryIcon(cat)+' '+escapeHTML(cat)+'</span><span>'+seen+'/'+total+' vues • '+mastered+' maîtrisées</span></div><div class="cat-bar"><div class="cat-fill" style="width:'+pct+'%"></div></div></div>';
+  }
+  el("catProgress").innerHTML=html;
+  var nodes=el("catProgress").getElementsByClassName("cat-line");
+  for(var n=0;n<nodes.length;n++) nodes[n].onclick=function(){state.category=this.getAttribute("data-cat");el("category").value=state.category;save();newSession();};
+}
+function categoryIcon(cat){
+  var c=cat.toLowerCase();
+  if(c.indexOf("diab")>=0)return "🩸";
+  if(c.indexOf("cardio")>=0)return "❤️";
+  if(c.indexOf("antico")>=0)return "🛡️";
+  if(c.indexOf("dyslip")>=0)return "🧪";
+  if(c.indexOf("neuro")>=0||c.indexOf("épilep")>=0)return "🧠";
+  if(c.indexOf("psy")>=0)return "💬";
+  if(c.indexOf("thyro")>=0)return "🦋";
+  if(c.indexOf("contrace")>=0)return "🌸";
+  if(c.indexOf("tabag")>=0)return "🚭";
+  if(c.indexOf("goutte")>=0)return "🦶";
+  if(c.indexOf("digest")>=0)return "🌀";
+  if(c.indexOf("vitamine")>=0)return "☀️";
+  if(c.indexOf("ophtal")>=0)return "👁️";
+  if(c.indexOf("antalg")>=0)return "💊";
+  return "📚";
+}
+function highlight(s){
+  return escapeHTML(s);
+}
+function escapeReg(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,"\\$&");}
+
+function renderList(){
+  var arr=filtered(), html="";
+  el("listCount").textContent=arr.length+" cartes affichées";
+  el("toggleListAnswersBtn").textContent=state.listShowAnswers?"Masquer les réponses":"Afficher les réponses";
+  for(var i=0;i<arr.length;i++){
+    var idx=arr[i], c=CARDS[idx];
+    html += '<div class="list-card"><div class="card-meta"><span class="badge">'+categoryIcon(c.category)+' '+escapeHTML(c.category)+'</span><span class="badge yellow">'+masteryStars(idx)+' Niveau '+(state.box[idx]||1)+'/5</span></div><h3>'+highlight(c.question)+'</h3>';
+    if(state.listShowAnswers) html += '<div class="list-answer">'+highlight(c.answer)+'</div>';
+    else html += '<div class="empty-answer">Réponse masquée.</div>';
+    html += '<div style="margin-top:12px"><button class="btn small" onclick="copyCard('+idx+')">Copier cette carte</button> <button class="btn small" onclick="jumpToCard('+idx+')">Réviser cette carte</button></div></div>';
+  }
+  el("listContent").innerHTML=html || '<div class="list-card">Aucune carte à afficher.</div>';
+}
+function jumpToCard(idx){state.viewMode="Révision";el("viewMode").value="Révision";session=[idx];pos=0;current=idx;flipped=false;save();render();}
+
+function copyCurrent(){if(session.length)copyCard(current);}
+function copyCard(idx){
+  var c=CARDS[idx], txt="Q: "+c.question+"\nR: "+c.answer;
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function(){toast("Carte copiée");},function(){fallbackCopy(txt);});
+  else fallbackCopy(txt);
+}
+function fallbackCopy(txt){
+  var ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.left="-9999px";document.body.appendChild(ta);ta.focus();ta.select();
+  try{document.execCommand("copy");toast("Carte copiée");}catch(e){window.prompt("Copie la carte :",txt);}
+  document.body.removeChild(ta);
+}
+
+function openBrowser(){
+  openModal("Explorer les cartes","Choisis directement une carte dans la session filtrée.");
+  var arr=filtered(), html='<div class="cards-grid">';
+  for(var i=0;i<arr.length;i++){
+    var idx=arr[i], c=CARDS[idx];
+    html+='<div class="small-card" onclick="selectFromBrowser('+idx+')"><b>'+(state.stars[idx]?'★ ':'')+escapeHTML(c.question)+'</b><span>'+categoryIcon(c.category)+' '+escapeHTML(c.category)+' • Niveau '+(state.box[idx]||1)+'/5</span></div>';
+  }
+  html+='</div>';
+  el("modalBody").innerHTML=html;
+}
+function selectFromBrowser(idx){session=[idx];pos=0;current=idx;flipped=false;closeModal();render();}
+function openQuality(){
+  openModal("Vérification des cartes","Détection automatique des cartes incomplètes et des doublons exacts.");
+  var html="";
+  html += "<p><b>"+CARDS.length+"</b> cartes chargées.</p>";
+  html += "<p><b>"+VALIDATION.errors.length+"</b> erreur(s), <b>"+VALIDATION.warnings.length+"</b> avertissement(s).</p>";
+  if(VALIDATION.errors.length){html += "<h3>Erreurs</h3><ul>"; for(var i=0;i<VALIDATION.errors.length;i++)html+="<li>"+escapeHTML(VALIDATION.errors[i])+"</li>"; html+="</ul>";}
+  if(VALIDATION.warnings.length){html += "<h3>Avertissements</h3><ul>"; for(var j=0;j<VALIDATION.warnings.length;j++)html+="<li>"+escapeHTML(VALIDATION.warnings[j])+"</li>"; html+="</ul>";}
+  if(!VALIDATION.errors.length && !VALIDATION.warnings.length) html += "<p>Aucune anomalie détectée.</p>";
+  el("modalBody").innerHTML=html;
+}
+function openInstallHelp(){
+  openModal("Installation sur téléphone","Le fichier peut être ouvert dans le navigateur ou ajouté à l'écran d'accueil.");
+  el("modalBody").innerHTML='<p><b>iPhone :</b> ouvrir le fichier ou le lien dans Safari, toucher le bouton Partager, puis choisir <b>Ajouter à l’écran d’accueil</b>.</p><p><b>Android :</b> ouvrir dans Chrome, menu ⋮, puis <b>Ajouter à l’écran d’accueil</b>.</p><p>Le site reste un fichier HTML autonome : les cartes sont intégrées directement dedans.</p>';
+}
+function openModal(title,intro){el("modalTitle").textContent=title;el("modalIntro").textContent=intro;el("modalBody").innerHTML="";el("overlay").className="overlay show";}
+function closeModal(){el("overlay").className="overlay";}
+function updateQualityText(){
+  var e=VALIDATION.errors.length,w=VALIDATION.warnings.length;
+  el("qualityText").textContent=e?"Vérification : "+e+" erreur(s)":(w?"Vérification : "+w+" avertissement(s)":"Vérification : OK");
+}
+
+function difficultyScore(i){
+  return 2*Number(state.wrong[i]||0) + Number(state.unsure[i]||0) - Number(state.correct[i]||0);
+}
+function masteryStars(i){
+  var n=Number(state.box[i]||1), out='<span class="mastery-stars">';
+  for(var k=1;k<=5;k++) out += k<=n ? '★' : '<span class="off">★</span>';
+  return out+'</span>';
+}
+function categoryMasteryPct(cat){
+  var total=0, mastered=0;
+  for(var i=0;i<CARDS.length;i++){
+    if(CARDS[i].category===cat){total++; if(Number(state.box[i]||1)>=5) mastered++;}
+  }
+  return total?Math.round(mastered/total*100):0;
+}
+function parseSearch(raw){
+  var q=trim(raw||"");
+  var low=q.toLowerCase();
+  var type="";
+  if(low==="ei" || startsWith(low,"ei ")){type="ei"; q=trim(q.slice(2));}
+  else if(low==="ma" || startsWith(low,"ma ")){type="ma"; q=trim(q.slice(2));}
+  else if(low==="ci" || startsWith(low,"ci ")){type="ci"; q=trim(q.slice(2));}
+  return {type:type,text:q};
+}
+function matchesSearchType(card,type){
+  var q=card.question.toLowerCase();
+  if(type==="ei") return q.indexOf("effets indésirables")>=0 || q.indexOf("ei ")>=0 || q.indexOf("ei de")>=0;
+  if(type==="ma") return q.indexOf("mécanisme")>=0 || q.indexOf("mecanisme")>=0 || q.indexOf("ma ")>=0;
+  if(type==="ci") return q.indexOf("contre-indication")>=0 || q.indexOf("contre indications")>=0 || q.indexOf("contre-indications")>=0 || q.indexOf("ci ")>=0;
+  return true;
+}
+function ensureDaily(){
+  if(!state.daily || state.daily.date!==todayKey()) state.daily={date:todayKey(),seen:0,correct:0,unsure:0,wrong:0};
+}
+function todayKey(){
+  var d=new Date();
+  return d.getFullYear()+"-"+("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2);
+}
+function updateDaily(type){
+  ensureDaily();
+  state.daily.seen++;
+  if(type==="correct") state.daily.correct++;
+  else if(type==="unsure") state.daily.unsure++;
+  else state.daily.wrong++;
+}
+function animateFeedback(type){
+  var card=el("card");
+  card.className=card.className.replace(/\s*feedback-(correct|unsure|wrong)/g,"");
+  card.className += " feedback-"+type;
+  setTimeout(function(){
+    card.className=card.className.replace(/\s*feedback-(correct|unsure|wrong)/g,"");
+  },210);
+}
+function quickSession(n){
+  var arr=filtered().slice(0);
+  if(!arr.length){toast("Aucune carte disponible");return;}
+  shuffle(arr);
+  session=arr.slice(0,Math.min(n,arr.length));
+  lastSessionBase=session.slice(0);
+  state.viewMode="Révision"; el("viewMode").value="Révision";
+  exam={answered:0,know:0,unsure:0,fail:0,wrongCards:[],unsureCards:[]};
+  pos=0; current=session[0]; flipped=false; save(); render();
+  toast("Session rapide : "+session.length+" cartes");
+}
+function quickWeakSession(){
+  var arr=[];
+  for(var i=0;i<CARDS.length;i++){
+    if(difficultyScore(i)>0 || Number(state.box[i]||1)<=2 || Number(state.wrong[i]||0)>0) arr.push(i);
+  }
+  if(!arr.length){toast("Aucune carte faible détectée");return;}
+  arr.sort(function(a,b){return difficultyScore(b)-difficultyScore(a);});
+  session=arr;
+  lastSessionBase=session.slice(0);
+  state.viewMode="Révision"; el("viewMode").value="Révision";
+  exam={answered:0,know:0,unsure:0,fail:0,wrongCards:[],unsureCards:[]};
+  pos=0; current=session[0]; flipped=false; save(); render();
+  toast("Session cartes faibles : "+session.length+" cartes");
+}
+function openWeakPoints(){
+  openModal("Points faibles","Les cartes sont classées avec : difficulté = 2 × ratés + hésitations − corrects.");
+  var arr=[];
+  for(var i=0;i<CARDS.length;i++) arr.push(i);
+  arr.sort(function(a,b){return difficultyScore(b)-difficultyScore(a);});
+  var html='<table class="weak-table"><tr><th>Carte</th><th>Catégorie</th><th>Score</th><th>Actions</th></tr>';
+  for(var k=0;k<Math.min(20,arr.length);k++){
+    var idx=arr[k], c=CARDS[idx];
+    if(difficultyScore(idx)<=0 && k>9) break;
+    html+='<tr><td>'+escapeHTML(c.question)+'</td><td>'+categoryIcon(c.category)+' '+escapeHTML(c.category)+'</td><td>'+difficultyScore(idx)+'</td><td><button class="btn small" onclick="selectFromBrowser('+idx+')">Réviser</button></td></tr>';
+  }
+  html+='</table>';
+  el("modalBody").innerHTML=html;
+}
+function showExamSummary(){
+  var weakCats={}, i;
+  for(i=0;i<exam.wrongCards.length;i++) weakCats[CARDS[exam.wrongCards[i]].category]=(weakCats[CARDS[exam.wrongCards[i]].category]||0)+2;
+  for(i=0;i<exam.unsureCards.length;i++) weakCats[CARDS[exam.unsureCards[i]].category]=(weakCats[CARDS[exam.unsureCards[i]].category]||0)+1;
+  var weakArr=[];
+  for(var k in weakCats) if(weakCats.hasOwnProperty(k)) weakArr.push({cat:k,score:weakCats[k]});
+  weakArr.sort(function(a,b){return b.score-a.score;});
+  openModal("Session terminée","Bilan de ton mode examen.");
+  var html='<div class="summary-grid">';
+  html+='<div class="summary-stat"><b>'+examScore()+'%</b><span>Score</span></div>';
+  html+='<div class="summary-stat"><b>'+exam.know+'</b><span>Correct</span></div>';
+  html+='<div class="summary-stat"><b>'+exam.unsure+'</b><span>Hésité</span></div>';
+  html+='<div class="summary-stat"><b>'+exam.fail+'</b><span>Raté</span></div>';
+  html+='</div>';
+  if(weakArr.length){
+    html+='<p><b>Catégories à revoir :</b> ';
+    for(i=0;i<Math.min(3,weakArr.length);i++) html += (i?", ":"") + categoryIcon(weakArr[i].cat)+" "+escapeHTML(weakArr[i].cat);
+    html+='</p>';
+  }else html+='<p>Aucune catégorie faible dans cette session.</p>';
+  html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">';
+  html += "<button class=\"btn red\" onclick=\"reviewSession('wrong')\">Revoir mes ratés</button>";
+  html += "<button class=\"btn yellow\" onclick=\"reviewSession('unsure')\">Revoir mes hésitations</button>";
+  html += "<button class=\"btn\" onclick=\"reviewSession('both')\">Revoir ratés + hésitations</button>";
+  html += '<button class="btn primary" onclick="restartExam()">Recommencer l’examen</button>';
+  html += '</div>';
+  el("modalBody").innerHTML=html;
+}
+function reviewSession(type){
+  var arr=[];
+  if(type==="wrong") arr=exam.wrongCards.slice(0);
+  else if(type==="unsure") arr=exam.unsureCards.slice(0);
+  else arr=uniqueArray(exam.wrongCards.concat(exam.unsureCards));
+  if(!arr.length){toast("Aucune carte dans cette sélection");return;}
+  session=arr; lastSessionBase=arr.slice(0);
+  state.viewMode="Révision"; el("viewMode").value="Révision";
+  pos=0; current=session[0]; flipped=false;
+  closeModal(); save(); render();
+}
+function restartExam(){
+  session=lastSessionBase.length?lastSessionBase.slice(0):filtered();
+  state.viewMode="Examen"; el("viewMode").value="Examen";
+  exam={answered:0,know:0,unsure:0,fail:0,wrongCards:[],unsureCards:[]};
+  pos=0; current=session[0]||0; flipped=false;
+  closeModal(); save(); render();
+}
+function uniqueArray(arr){
+  var o={}, out=[];
+  for(var i=0;i<arr.length;i++){if(!o[arr[i]]){o[arr[i]]=true;out.push(arr[i]);}}
+  return out;
+}
+function toggleHideMasteredCats(){
+  state.hideMasteredCats=!state.hideMasteredCats;
+  fillCategory(); save(); newSession();
+  toast(state.hideMasteredCats?"Catégories maîtrisées masquées":"Toutes les catégories affichées");
+}
+function toggleListAnswers(){
+  state.listShowAnswers=!state.listShowAnswers;
+  save(); render();
+}
+function resetCurrentCategory(){
+  var cat=el("category").value;
+  if(cat==="Toutes"){toast("Choisis une catégorie précise");return;}
+  if(!confirm("Réinitialiser seulement la catégorie « "+cat+" » ?")) return;
+  for(var i=0;i<CARDS.length;i++){
+    if(CARDS[i].category===cat){
+      state.seen[i]=0; state.correct[i]=0; state.wrong[i]=0; state.unsure[i]=0; state.box[i]=1; state.lastSeen[i]=""; state.stars[i]=false;
+    }
+  }
+  save(); newSession(); toast("Catégorie réinitialisée");
+}
+
+function toggleTheme(){document.body.className=document.body.className==="light"?"":"light";state.theme=document.body.className==="light"?"light":"dark";save();}
+function resetProgress(){if(confirm("Supprimer toute la progression locale ?")){safeRemove(STORAGE_KEY);state=baseState();exam={answered:0,know:0,unsure:0,fail:0,wrongCards:[],unsureCards:[]};init();toast("Progression réinitialisée");}}
+function setupManifest(){
+  try{
+    var manifest={name:"Flashcards Pharma",short_name:"Pharma",start_url:".",display:"standalone",background_color:"#0b1022",theme_color:"#0ea5e9"};
+    var blob=new Blob([JSON.stringify(manifest)],{type:"application/json"});
+    var link=document.createElement("link"); link.rel="manifest"; link.href=URL.createObjectURL(blob); document.head.appendChild(link);
+  }catch(e){}
+}
+init();
+</script>
+</body>
+</html>
